@@ -1,0 +1,18 @@
+Config { font = "-*-Terminus-Bold-R-Normal-*-12-*-*-*-*-*-*-*"
+       , bgColor = "#0c0c3a"
+       , fgColor = "grey"
+       , position = TopW L 91
+       , commands = [ Run Weather "ESGG" ["-t","<tempC>°C","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
+                    , Run Cpu ["-t","cpu: <total>","-L","30","-H","80","--normal","green","--high","red"] 10
+                    , Run Memory ["-t","mem: <usedratio>%"] 10
+                    , Run Swap ["-t","swap: <usedratio>"] 10
+                    , Run Network "wlan0" ["-L","100","-H","500","--normal","green","--high","red"] 10
+                    , Run Network "eth0" ["-L","100","-H","1000","--normal","green","--high","red"] 10
+                    , Run BatteryP ["C23B"] ["-L","10","-H","40","--low","red","--normal","green","-t","bat: <left>"] 10
+                    , Run Date "%a %_d %b %H:%M" "date" 10
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ <fc=#505050>[</fc> %eth0% <fc=#505050>*</fc> %wlan0% <fc=#505050>][</fc> %cpu% <fc=#505050>|</fc> %memory% <fc=#505050>|</fc> %swap% <fc=#505050>|</fc> %battery% <fc=#505050>][</fc> <fc=#ee9a00>%date%</fc> <fc=#505050>|</fc> %ESGG% <fc=#505050>]</fc>"
+       }
