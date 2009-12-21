@@ -1,7 +1,5 @@
 --
--- Stefan Kangas xmonad configuration.
---
--- loosely based on xmonad example config file for xmonad-0.9
+-- skangas xmonad configuration
 --
 -- This configuration is an adaption of the configuration by And1 over at the
 -- xmonad wiki, so if you like this one you should check his stuff out.  I've
@@ -30,6 +28,7 @@ import XMonad.Layout.LayoutHints
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.Simplest
 import XMonad.Layout.Tabbed
 import XMonad.Prompt
 import XMonad.Prompt.RunOrRaise
@@ -41,14 +40,15 @@ import qualified Data.Map        as M
 
 ------------------------------------------------------------------------
 
-myStatusBar = "dzen2 -x '0' -y '0' -h '16' -w '800' -ta 'l' "
+myStatusBar = "dzen2 -x '0' -y '0' -h '16' -w '600' -ta 'l' "
               ++ "-fg '" ++ myNormalFGColor ++ "' "
               ++ "-bg '" ++ myNormalBGColor ++ "' "
               ++ "-fn '" ++ myFont ++ "' "
-myTopBar = "conky -c .conkytop | dzen2 -x '800' -y '0' -h '16' -w '480' -ta 'r' "
+myTopBar = "conky -c .conkytop | dzen2 -x '600' -y '0' -h '16' -w '616' -ta 'r' "
            ++ "-fg '" ++ myDzenFGColor ++ "' "
            ++ "-bg '" ++ myNormalBGColor ++ "' "
            ++ "-fn '" ++ myFont ++ "' "
+myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --tint 0x000000 --height 12"
  
 -- Urgency hint options:
 myUrgencyHook = withUrgencyHook dzenUrgencyHook
@@ -90,10 +90,11 @@ myManageHook = composeAll . concat $
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!6) | x <- my7Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!7) | x <- my8Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!8) | x <- my9Shifts]
+    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!8) | x <- my9Shifts]
     ]
     where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
-    myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
+    myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
     myTFloats = ["Downloads", "Iceweasel Preferences", "Save As..."]
     myRFloats = []
     myIgnores = ["desktop_window", "kdesktop"]
@@ -180,8 +181,8 @@ myModMask       = mod4Mask
 --
 myNumlockMask   = 0
  
-myWorkspaces    = ["1:emacs","2:browser","3:comm","4","5","6","7","8:mplayer","9:amarok"]
- 
+myWorkspaces    = ["1:emacs","2:browser","3:comm","4","5","6","7","8:multimedia","9:music"]
+
 -- Border colors for unfocused and focused windows, respectively.
 --
 myNormalBorderColor  = "#151515"
@@ -191,18 +192,11 @@ myFocusedBorderColor = "#ffff00"
 -- Key bindings. Add, modify or remove key bindings here.
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
- 
-    -- launch a terminal
     [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
-
     , ((modm .|. shiftMask, xK_t     ), spawn "emacsclient -c -a emacs")
-
     , ((modm .|. shiftMask, xK_m     ), spawn "amarok")
-
     , ((modm,               xK_f     ), spawn "conkeror")
-
     , ((modm .|. shiftMask, xK_f     ), spawn "firefox")
-
     , ((modm .|. shiftMask, xK_p     ), spawn "pidgin")
       -- FIXME: when xterm isn't resized, alsamixer stays really small.
       -- add stuff to resize the window after spawned
@@ -210,73 +204,45 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
                                            spawn "xterm -e echo \"FIXME: fulhack\"")
     , ((modm .|. shiftMask, xK_y     ), runOrRaisePrompt defaultXPConfig)
     , ((modm .|. shiftMask, xK_s     ), sshPrompt defaultXPConfig)
-
-    -- launch dmenu
-    , ((modm,               xK_p     ), spawn "exe=`dmenu_path | dmenu` && eval \"exec $exe\"")
+    , ((modm,               xK_j     ), spawn "exe=`dmenu_path | dmenu` && eval \"exec $exe\"")
  
-    -- launch gmrun
-    , ((modm .|. shiftMask, xK_p     ), spawn "gmrun")
- 
-    -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
- 
-     -- Rotate through the available layout algorithms
     , ((modm,               xK_space ), sendMessage NextLayout)
  
+   ,((modm .|. controlMask, xK_b     ), sendMessage $ ToggleStruts)
+
     --  Reset the layouts on the current workspace to default
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
  
     -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
+    , ((modm,               xK_r     ), refresh)
  
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
- 
-    -- Move focus to the next window
     , ((modm,               xK_n     ), windows W.focusDown)
- 
-    -- Move focus to the previous window
     , ((modm,               xK_p     ), windows W.focusUp  )
- 
-    -- Move focus to the master window
     , ((modm,               xK_m     ), windows W.focusMaster  )
- 
-    -- Swap the focused window and the master window
     , ((modm,               xK_Return), windows W.swapMaster)
- 
-    -- Swap the focused window with the next window
     , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
- 
-    -- Swap the focused window with the previous window
     , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
  
-    -- Shrink the master area
+    -- Shrink/Expand the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
- 
-    -- Expand the master area
     , ((modm,               xK_l     ), sendMessage Expand)
  
     -- Push window back into tiling
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
  
-    -- Increment the number of windows in the master area
+    -- Increment/Deincrement the number of windows in the master area
     , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
- 
-    -- Deincrement the number of windows in the master area
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
- 
-    -- Toggle the status bar gap
-    -- Use this binding with avoidStruts from Hooks.ManageDocks.
-    -- See also the statusBar function from Hooks.DynamicLog.
-    --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
- 
-    -- Quit xmonad
+
+    -- Quit/Restart xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
- 
-    -- Restart xmonad
-    , ((modm              , xK_q     ), restart "xmonad" True)
---    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
+    , ((modm              , xK_q     ), do spawn "killall trayer"
+                                           spawn "killall dzen2"
+                                           spawn "killall conky"
+                                           restart "xmonad" True)
     ]
     ++
  
@@ -353,7 +319,7 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
 -- which denotes layout choice.
 --
 --Layouts:
-myLayout = avoidStruts $ layoutHints $ onWorkspace "1:irc" (resizableTile ||| Mirror resizableTile) $ onWorkspace (myWorkspaces!!5) gimpLayout $ smartBorders (Full ||| resizableTile ||| Mirror resizableTile)
+myLayout = avoidStruts $ layoutHints $ onWorkspace (myWorkspaces!!5) gimpLayout $ onWorkspace (myWorkspaces!!7) (noBorders Simplest) $ smartBorders (Full ||| resizableTile ||| Mirror resizableTile)
    where
     resizableTile = ResizableTall nmaster delta ratio []
     tabbedLayout = tabbedBottomAlways shrinkText myTheme
@@ -428,6 +394,7 @@ main = do
 -- spawnPipe "xmessage 'hello'"
   dzen <- spawnPipe myStatusBar
   topBar <- spawnPipe myTopBar
+  trayer <- spawnPipe myTrayer
   xmonad $ myUrgencyHook $ defaultConfig
            { terminal           = myTerminal
            , focusFollowsMouse  = myFocusFollowsMouse
@@ -449,7 +416,7 @@ main = do
            , startupHook        = myStartupHook
            , layoutHook         = myLayout
                                   --layoutHook = smartBorders $ avoidStruts $ layoutHook defaultConfig
-           , manageHook         = myManageHook
+           , manageHook         = manageDocks <+> myManageHook
 --           , handleEventHook    = myEventHook, -- 0.9
            }
 
@@ -475,6 +442,6 @@ myDzenPP h = defaultPP
     , ppOutput = hPutStrLn h
     }
     where
-    dropIx wsId = if (':' `elem` wsId) then drop 2 wsId else wsId
-    staticWs = take 3 myWorkspaces
+    dropIx wsId = if (':' `elem` wsId) then drop 2 wsId else wsId -- remove number in front of name
+    staticWs = [] -- nothing WAS take 1 myWorkspaces
 
