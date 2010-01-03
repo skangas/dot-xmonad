@@ -249,8 +249,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
  
     --
     -- mod-[1..9], Switch to workspace N
-    --
-    -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
     --
     [((m .|. modm, k), windows $ f i)
@@ -270,37 +268,21 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
 --
-myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
+myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
  
     -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modMask, button1), (\w -> focus w >> mouseMoveWindow w))
+    [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
+                                       >> windows W.shiftMaster))
  
     -- mod-button2, Raise the window to the top of the stack
-    , ((modMask, button2), (\w -> focus w >> windows W.swapMaster))
+    , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
  
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
+    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
+                                       >> windows W.shiftMaster))
  
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
- 
--- for 0.9:
-
--- myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
- 
---     -- mod-button1, Set the window to floating mode and move by dragging
---     [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
---                                        >> windows W.shiftMaster))
- 
---     -- mod-button2, Raise the window to the top of the stack
---     , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
- 
---     -- mod-button3, Set the window to floating mode and resize by dragging
---     , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
---                                        >> windows W.shiftMaster))
- 
---     -- you may also bind events to the mouse scroll wheel (button4 and button5)
---     ]
  
 ------------------------------------------------------------------------
 -- Layouts:
@@ -325,25 +307,13 @@ myLayout = avoidStruts $ layoutHints $ onWorkspace (myWorkspaces!!5) gimpLayout 
     resizableTile = ResizableTall nmaster delta ratio []
     tabbedLayout = tabbedBottomAlways shrinkText myTheme
     gimpLayout = tabbedLayout ||| Full
+    -- The default number of windows in the master pane
     nmaster = 1
+    -- Default proportion of screen occupied by master pane
     ratio = toRational (2/(1+sqrt(5)::Double))
+    -- Percent of screen to increment by when resizing panes
     delta = 3/100
 
-
--- myLayout = tiled ||| Mirror tiled ||| Full
---   where
---      -- default tiling algorithm partitions the screen into two panes
---      tiled   = Tall nmaster delta ratio
- 
---      -- The default number of windows in the master pane
---      nmaster = 1
- 
---      -- Default proportion of screen occupied by master pane
---      ratio   = 1/2
- 
---      -- Percent of screen to increment by when resizing panes
---      delta   = 3/100
- 
 ------------------------------------------------------------------------
 -- Event handling
  
