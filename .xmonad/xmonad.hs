@@ -77,6 +77,7 @@ mySeperatorColor = "#555555"
 
 myManageHook = composeAll . concat $
     [ [className =? c --> doFloat | c <- myCFloats]
+    , [ isFullscreen --> doFullFloat ]
 --    , [isDialog --> doFloat]
     , [title =? t --> doFloat | t <- myTFloats]
     , [resource =? r --> doFloat | r <- myRFloats]
