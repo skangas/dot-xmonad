@@ -166,7 +166,7 @@ myBorderWidth   = 1
 -- "windows key" is usually mod4Mask.
 --
 myModMask       = mod4Mask
- 
+
 -- The mask for the numlock key. Numlock status is "masked" from the
 -- current modifier status, so the keybindings will work with numlock on or
 -- off. You may need to change this on some systems.
@@ -193,25 +193,24 @@ myFocusedBorderColor = "#ffff00"
 -- Key bindings. Add, modify or remove key bindings here.
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-    [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
-    , ((modm .|. shiftMask, xK_t     ), spawn "emacsclient -c -a emacs")
-    , ((modm .|. shiftMask, xK_m     ), spawn "amarok")
+    [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
+    , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
+    , ((modm,               xK_m     ), spawn "amarok")
     , ((modm,               xK_f     ), spawn "conkeror")
     , ((modm .|. shiftMask, xK_f     ), spawn "firefox")
-    , ((modm .|. shiftMask, xK_p     ), spawn "pidgin")
+--    , ((modm .|. shiftMask, xK_p     ), spawn "pidgin")
       -- FIXME: when xterm isn't resized, alsamixer stays really small.
       -- add stuff to resize the window after spawned
     , ((modm .|. shiftMask, xK_v     ), do spawn "xterm -e alsamixer"
                                            spawn "xterm -e echo \"FIXME: fulhack\"")
-    , ((modm .|. shiftMask, xK_y     ), runOrRaisePrompt defaultXPConfig)
-    , ((modm .|. shiftMask, xK_s     ), sshPrompt defaultXPConfig)
-    , ((modm,               xK_j     ), spawn "exe=`dmenu_path | dmenu` && eval \"exec $exe\"")
- 
-    , ((modm .|. shiftMask, xK_c     ), kill)
-    , ((modm,               xK_space ), sendMessage NextLayout)
- 
-   ,((modm .|. controlMask, xK_b     ), sendMessage $ ToggleStruts)
+    , ((modm,               xK_j     ), spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
+    , ((modm .|. shiftMask, xK_j     ), runOrRaisePrompt defaultXPConfig)
+    , ((modm,               xK_s     ), sshPrompt defaultXPConfig)
 
+    , ((modm .|. shiftMask, xK_c     ), kill)
+    , ((modm .|. controlMask, xK_b   ), sendMessage $ ToggleStruts)
+
+    , ((modm,               xK_space ), sendMessage NextLayout)
     --  Reset the layouts on the current workspace to default
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
  
@@ -223,7 +222,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_n     ), windows W.focusDown)
     , ((modm,               xK_p     ), windows W.focusUp  )
     , ((modm,               xK_m     ), windows W.focusMaster  )
-    , ((modm,               xK_Return), windows W.swapMaster)
+    , ((modm .|. shiftMask, xK_Return), windows W.swapMaster)
     , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
     , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
  
@@ -254,15 +253,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
- 
+
+    -- ++
     --
     -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
     --
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+    -- [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+    --     | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+    --     , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
  
  
 ------------------------------------------------------------------------
