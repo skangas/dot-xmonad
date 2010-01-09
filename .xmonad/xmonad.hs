@@ -19,6 +19,7 @@ import Data.Monoid
 import System.Exit
 import System.IO
 import XMonad
+import XMonad.Actions.Warp
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
@@ -216,7 +217,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
  
     -- Resize viewed windows to the correct size
     , ((modm,               xK_r     ), refresh)
- 
+    , ((modm,               xK_b     ), banishScreen UpperRight)
+
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
     , ((modm,               xK_n     ), windows W.focusDown)
