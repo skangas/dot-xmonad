@@ -196,7 +196,7 @@ myFocusedBorderColor = "#ffff00"
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
-    , ((modm,               xK_m     ), spawn "amarok")
+    , ((modm,               xK_a     ), spawn "amarok")
     , ((modm,               xK_f     ), spawn "conkeror")
     , ((modm .|. shiftMask, xK_f     ), spawn "firefox")
 --    , ((modm .|. shiftMask, xK_p     ), spawn "pidgin")
@@ -222,11 +222,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
     , ((modm,               xK_n     ), windows W.focusDown)
-    , ((modm,               xK_p     ), windows W.focusUp  )
+    , ((modm,               xK_p     ), windows W.focusUp)
     , ((modm,               xK_m     ), windows W.focusMaster  )
-    , ((modm .|. shiftMask, xK_Return), windows W.swapMaster)
-    , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
-    , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
+    , ((modm .|. shiftMask, xK_m     ), windows W.swapMaster)
+    , ((modm .|. shiftMask, xK_j     ), windows W.swapDown)
+    , ((modm .|. shiftMask, xK_k     ), windows W.swapUp)
  
     -- Shrink/Expand the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
