@@ -31,6 +31,7 @@ import XMonad.Layout.PerWorkspace
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Simplest
 import XMonad.Layout.Tabbed
+import XMonad.Layout.TwoPane
 import XMonad.Prompt
 import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Ssh
@@ -303,7 +304,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- which denotes layout choice.
 --
 --Layouts:
-myLayout = avoidStruts $ layoutHints $ onWorkspace (myWorkspaces!!5) gimpLayout $ onWorkspace (myWorkspaces!!7) (noBorders Simplest) $ smartBorders (Full ||| resizableTile ||| Mirror resizableTile)
+myLayout = avoidStruts $ layoutHints $ onWorkspace (myWorkspaces!!1) (TwoPane (1/3) (2/3)) $ onWorkspace (myWorkspaces!!5) gimpLayout $ onWorkspace (myWorkspaces!!7) (noBorders Simplest) $ smartBorders (Full ||| resizableTile ||| Mirror resizableTile)
    where
     resizableTile = ResizableTall nmaster delta ratio []
     tabbedLayout = tabbedBottomAlways shrinkText myTheme
