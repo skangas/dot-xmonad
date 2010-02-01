@@ -18,6 +18,7 @@ import Control.Monad (liftM2)
 import Data.Monoid
 import System.Exit
 import System.IO
+import System.Posix.Unistd
 import XMonad
 import XMonad.Actions.Warp
 import XMonad.Hooks.DynamicLog
@@ -42,16 +43,33 @@ import qualified Data.Map        as M
 
 ------------------------------------------------------------------------
 
-myStatusBar = "dzen2 -x '0' -y '0' -h '16' -w '600' -ta 'l' "
-              ++ "-fg '" ++ myNormalFGColor ++ "' "
-              ++ "-bg '" ++ myNormalBGColor ++ "' "
-              ++ "-fn '" ++ myFont ++ "' "
-myTopBar = "conky -c .conkytop | dzen2 -x '600' -y '0' -h '16' -w '616' -ta 'r' "
-           ++ "-fg '" ++ myDzenFGColor ++ "' "
-           ++ "-bg '" ++ myNormalBGColor ++ "' "
-           ++ "-fn '" ++ myFont ++ "' "
-myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --tint 0x000000 --height 12"
- 
+myStatusBarFont = "-artwiz-nu.se-medium-r-normal-*-*-*-*-*-*-*-iso8859-1"
+myStatusBar host = "dzen2 -x '0' -y '0' -h '12' -ta 'l' "
+                   ++ "-w '"  ++ show (width host) ++ "' "
+                   ++ "-fg '" ++ myDzenFGColor     ++ "' "
+                   ++ "-bg '" ++ myNormalBGColor   ++ "' "
+                   ++ "-fn '" ++ myStatusBarFont   ++ "' "
+                      where
+                        width "lenin"  = 1200
+                        width "castro" = 600
+                        width _        = 600
+
+myTopBar host = "conky -c .conkytop | dzen2 -y '0' -h '12' -ta 'r' "
+                ++ "-x '"  ++ show (xpos host)  ++ "' "
+                ++ "-w '"  ++ show (width host) ++ "' "
+                ++ "-fg '" ++ myDzenFGColor     ++ "' "
+                ++ "-bg '" ++ myNormalBGColor   ++ "' "
+                ++ "-fn '" ++ myStatusBarFont   ++ "' "
+                    where
+                      width "lenin"  = 600
+                      width "castro" = 616
+                      width _        = 600
+                      xpos "lenin"   = 1200
+                      xpos "castro"  = 600
+                      xpos _         = 600
+
+myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --heighttype pixel --height 5"
+
 -- Urgency hint options:
 myUrgencyHook = withUrgencyHook dzenUrgencyHook
     { args = ["-x", "0", "-y", "1184", "-h", "16", "-w", "1920", "-ta", "r", "-expand", "l", "-fg", "" ++ myUrgentFGColor ++ "", "-bg", "" ++ myNormalBGColor ++ "", "-fn", "" ++ myFont ++ ""] }
@@ -365,8 +383,9 @@ myStartupHook = setWMName "LG3D" -- needed to work around buggy java
 main = do
 --  xmproc <- spawnPipe "/home/skangas/local/bin/xmobar /home/skangas/.xmobarrc"
 -- spawnPipe "xmessage 'hello'"
-  dzen <- spawnPipe myStatusBar
-  topBar <- spawnPipe myTopBar
+  host <- fmap nodeName getSystemID
+  dzen <- spawnPipe (myStatusBar host)
+  topBar <- spawnPipe (myTopBar host)
   trayer <- spawnPipe myTrayer
   xmonad $ myUrgencyHook $ defaultConfig
            { terminal           = myTerminal
