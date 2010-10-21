@@ -37,6 +37,11 @@ import XMonad.Prompt
 import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Ssh
 import XMonad.Util.Run
+
+import XMonad.Layout.IM
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
+
  
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -50,7 +55,7 @@ myStatusBar host = "dzen2 -x '0' -y '0' -h '12' -ta 'l' "
                    ++ "-bg '" ++ myNormalBGColor   ++ "' "
                    ++ "-fn '" ++ myStatusBarFont   ++ "' "
                       where
-                        width "lenin"  = 1200
+                        width "lenin"  = 900
                         width "castro" = 600
                         width _        = 600
 
@@ -61,10 +66,10 @@ myTopBar host = "conky -c .conkytop | dzen2 -y '0' -h '12' -ta 'r' "
                 ++ "-bg '" ++ myNormalBGColor   ++ "' "
                 ++ "-fn '" ++ myStatusBarFont   ++ "' "
                     where
-                      width "lenin"  = 600
+                      width "lenin"  = 900
                       width "castro" = 616
                       width _        = 600
-                      xpos "lenin"   = 1200
+                      xpos "lenin"   = 900
                       xpos "castro"  = 600
                       xpos _         = 600
 
@@ -115,8 +120,8 @@ myManageHook = composeAll . concat $
     ]
     where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
-    myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
-    myTFloats = ["Downloads", "Iceweasel Preferences", "Save As..."]
+    myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus", "Eclipse", "Ediff"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
+    myTFloats = ["Downloads", "Iceweasel Preferences", "Save As...", "Ediff"]
     myRFloats = []
     myIgnores = ["desktop_window", "kdesktop"]
     my1Shifts = ["Emacs"]
@@ -170,7 +175,7 @@ myTheme = defaultTheme
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal      = "xterm"
+myTerminal      = "rxvt"
  
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -217,7 +222,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
     , ((modm,               xK_a     ), spawn "amarok")
     , ((modm,               xK_f     ), spawn "conkeror")
-    , ((modm .|. shiftMask, xK_f     ), spawn "firefox")
+    , ((modm .|. shiftMask, xK_f     ), spawn "iceweasel")
 --    , ((modm .|. shiftMask, xK_p     ), spawn "pidgin")
       -- FIXME: when xterm isn't resized, alsamixer stays really small.
       -- add stuff to resize the window after spawned
@@ -274,15 +279,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+    ++
 
-    -- ++
     --
     -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
     --
-    -- [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-    --     | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-    --     , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
  
  
 ------------------------------------------------------------------------
@@ -322,11 +327,12 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- which denotes layout choice.
 --
 --Layouts:
-myLayout = avoidStruts $ layoutHints $ onWorkspace (myWorkspaces!!1) (TwoPane (1/3) (2/3)) $ onWorkspace (myWorkspaces!!5) gimpLayout $ onWorkspace (myWorkspaces!!7) (noBorders Simplest) $ smartBorders (Full ||| resizableTile ||| Mirror resizableTile)
+myLayout = avoidStruts $ layoutHints $ onWorkspace (myWorkspaces!!5) gimpLayout $ onWorkspace (myWorkspaces!!7) (noBorders Simplest) $ smartBorders (Full ||| resizableTile ||| Mirror resizableTile)
    where
     resizableTile = ResizableTall nmaster delta ratio []
-    tabbedLayout = tabbedBottomAlways shrinkText myTheme
-    gimpLayout = tabbedLayout ||| Full
+    -- tabbedLayout = tabbedBottomAlways shrinkText myTheme
+    -- gimpLayout = tabbedLayout ||| Full
+    gimpLayout = withIM (0.11) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.15) (Role "gimp-dock") Full
     -- The default number of windows in the master pane
     nmaster = 1
     -- Default proportion of screen occupied by master pane
@@ -412,6 +418,7 @@ main = do
 --           , handleEventHook    = myEventHook, -- 0.9
            }
 
+
 -- dynamicLog pretty printer for dzen:
 myDzenPP h = defaultPP
     { ppCurrent = wrap ("^fg(" ++ myUrgentFGColor ++ ")^bg(" ++ myFocusedBGColor ++ ")^p()^i(" ++ myIconDir ++ "/corner.xbm)^fg(" ++ myNormalFGColor ++ ")") "^fg()^bg()^p()" . \wsId -> dropIx wsId
@@ -435,5 +442,5 @@ myDzenPP h = defaultPP
     }
     where
     dropIx wsId = if (':' `elem` wsId) then drop 2 wsId else wsId -- remove number in front of name
-    staticWs = [] -- nothing WAS take 1 myWorkspaces
+    staticWs = [] -- WAS take 1 myWorkspaces
 

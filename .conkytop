@@ -2,19 +2,21 @@ background no
 no_buffers yes
 out_to_console yes
 out_to_x no
-update_interval 1.0
+update_interval 3.0
 total_run_times 0
 uppercase no
 use_spacer none
 
 TEXT
-${if_up eth0}^fg(\666)eth0 ^fg(\77c000)${downspeedf eth0}K ^fg(\991133)${upspeedf eth0}K ^fg(\666)| $endif\
-${if_up wlan0}^fg(\666)wlan0 ^fg(\77c000)${downspeedf wlan0}K ^fg(\991133)${upspeedf wlan0}K ^fg(\666)| $endif\
-^fg(666)\
-BAT ${battery_percent C23B}% ^fg(666)| \
-CPU ^fg(3475aa)$cpu% ^fg(666)| \
-MEM ^fg(5599aa)$memperc% ^fg(666)| \
-^fg(92b19e)${time %y-%m-%d} ^fg(666)| \
+^fg(\#999)$mpd_status$if_mpd_playing: $mpd_smart$endif ^fg(\#666)| \
+${if_up eth0}^fg(\#666)eth0 ^fg(\#77c000)${downspeedf eth0}K ^fg(\#991133)${upspeedf eth0}K ^fg(\#666)| $endif\
+${if_up eth1}^fg(\#666)eth1 ^fg(\#77c000)${downspeedf eth1}K ^fg(\#991133)${upspeedf eth1}K ^fg(\#666)| $endif\
+${if_up wlan0}^fg(\#666)wlan0 ^fg(\#77c000)${downspeedf wlan0}K ^fg(\#991133)${upspeedf wlan0}K ^fg(\#666)| $endif\
+^fg(\#666)\
+BAT ${battery_percent C23B}% ^fg(\#666)| \
+^fg(\#3475aa)CPU $cpu% ^fg(\#666)| \
+^fg(\#5599aa)MEM $memperc% ^fg(\#666)| \
+^fg(\#92b19e)${time %y-%m-%d} ^fg(\#666)| \
 ^fg(white)${time %H:%M}
 
 
