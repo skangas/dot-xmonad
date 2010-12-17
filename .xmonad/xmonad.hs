@@ -34,8 +34,10 @@ import XMonad.Layout.Simplest
 import XMonad.Layout.Tabbed
 import XMonad.Layout.TwoPane
 import XMonad.Prompt
+import XMonad.Prompt.AppLauncher as AL
 import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Ssh
+import XMonad.Util.EZConfig
 import XMonad.Util.Run
 
 import XMonad.Layout.IM
@@ -217,30 +219,31 @@ myFocusedBorderColor = "#ffff00"
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
+
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
     , ((modm,               xK_a     ), spawn "amarok")
     , ((modm,               xK_f     ), spawn "conkeror")
     , ((modm .|. shiftMask, xK_f     ), spawn "iceweasel")
---    , ((modm .|. shiftMask, xK_p     ), spawn "pidgin")
-      -- FIXME: when xterm isn't resized, alsamixer stays really small.
-      -- add stuff to resize the window after spawned
-    , ((modm .|. shiftMask, xK_v     ), do spawn "xterm -e alsamixer"
-                                           spawn "xterm -e echo \"FIXME: fulhack\"")
-    , ((modm,               xK_j     ), spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
-    , ((modm .|. shiftMask, xK_j     ), runOrRaisePrompt defaultXPConfig)
+    , ((modm .|. shiftMask, xK_v     ), spawn "xterm -e alsamixer")
+    , ((modm,               xK_j     ), runOrRaisePrompt defaultXPConfig)
+    , ((modm .|. shiftMask, xK_j     ), spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
     , ((modm,               xK_s     ), sshPrompt defaultXPConfig)
 
     , ((modm .|. shiftMask, xK_c     ), kill)
     , ((modm .|. controlMask, xK_b   ), sendMessage $ ToggleStruts)
 
+    -- Change screen layout
     , ((modm,               xK_space ), sendMessage NextLayout)
+
     --  Reset the layouts on the current workspace to default
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
  
     -- Resize viewed windows to the correct size
     , ((modm,               xK_r     ), refresh)
+
+    -- Banish mouse pointer to top right
     , ((modm,               xK_b     ), banishScreen UpperRight)
 
     -- Move focus to the next window
@@ -249,9 +252,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_p     ), windows W.focusUp)
     , ((modm,               xK_m     ), windows W.focusMaster  )
     , ((modm .|. shiftMask, xK_m     ), windows W.swapMaster)
-    , ((modm .|. shiftMask, xK_j     ), windows W.swapDown)
-    , ((modm .|. shiftMask, xK_k     ), windows W.swapUp)
+    , ((modm .|. shiftMask, xK_n     ), windows W.swapDown)
+    , ((modm .|. shiftMask, xK_p     ), windows W.swapUp)
  
+    , ((modm,               xK_g     ), sendMessage Shrink)
+
     -- Shrink/Expand the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
     , ((modm,               xK_l     ), sendMessage Expand)
@@ -289,6 +294,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
  
+-- Additional keybindings, used by additionalKeysP below
+myAdditionalKeys =
+  [ ("<XF86AudioLowerVolume>", spawn "pavcs.sh down")
+  , ("<XF86AudioMute>",        spawn "pavcs.sh toggle")
+  , ("<XF86AudioRaiseVolume>", spawn "pavcs.sh up")
+  , ("<XF86AudioPlay>",        spawn "mpc toggle")
+  , ("<XF86AudioStop>",        spawn "mpc stop")
+  , ("<XF86AudioPrev>",        spawn "mpc prev")
+  , ("<XF86AudioNext>",        spawn "mpc next")
+  , ("<XF86Sleep>",            spawn "xlock") ]
  
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
@@ -416,8 +431,7 @@ main = do
                                   --layoutHook = smartBorders $ avoidStruts $ layoutHook defaultConfig
            , manageHook         = manageDocks <+> myManageHook
 --           , handleEventHook    = myEventHook, -- 0.9
-           }
-
+           } `additionalKeysP` myAdditionalKeys
 
 -- dynamicLog pretty printer for dzen:
 myDzenPP h = defaultPP
