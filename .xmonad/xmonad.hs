@@ -255,7 +255,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_n     ), windows W.swapDown)
     , ((modm .|. shiftMask, xK_p     ), windows W.swapUp)
  
-    , ((modm,               xK_g     ), sendMessage Shrink)
+    -- Generate password for weblogins
+    , ((modm,               xK_g     ), AL.launchApp defaultXPConfig "webpass")
 
     -- Shrink/Expand the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
