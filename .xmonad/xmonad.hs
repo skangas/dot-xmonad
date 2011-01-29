@@ -209,7 +209,7 @@ myModMask       = mod4Mask
 --
 myNumlockMask   = 0
  
-myWorkspaces    = ["1:emacs","2:browser","3:comm","4","5","6","7","8:multimedia","9:music"]
+myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
