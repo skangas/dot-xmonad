@@ -16,7 +16,7 @@ ${if_up wlan0}^fg(\#666)wlan0 ^fg(\#77c000)${downspeedf wlan0}K ^fg(\#991133)${u
 BAT ${battery_percent C23B}% ^fg(\#666)| \
 ^fg(\#3475aa)CPU $cpu% ^fg(\#666)| \
 ^fg(\#5599aa)MEM $memperc% ^fg(\#666)| \
-^fg(\#92b19e)${time %y-%m-%d} ^fg(\#666)| \
+^fg(\#92b19e)${time %m-%d} ^fg(\#666)| \
 ^fg(white)${time %H:%M}
 
 
