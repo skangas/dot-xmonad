@@ -13,7 +13,7 @@ ${if_up eth0}^fg(\#666)eth0 ^fg(\#77c000)${downspeedf eth0}K ^fg(\#991133)${upsp
 ${if_up eth1}^fg(\#666)eth1 ^fg(\#77c000)${downspeedf eth1}K ^fg(\#991133)${upspeedf eth1}K ^fg(\#666)| $endif\
 ${if_up wlan0}^fg(\#666)wlan0 ^fg(\#77c000)${downspeedf wlan0}K ^fg(\#991133)${upspeedf wlan0}K ^fg(\#666)| $endif\
 ^fg(\#666)\
-BAT ${battery_percent C23B}% ^fg(\#666)| \
+${battery} ^fg(\#666)| \
 ^fg(\#3475aa)CPU $cpu% ^fg(\#666)| \
 ^fg(\#5599aa)MEM $memperc% ^fg(\#666)| \
 ^fg(\#92b19e)${time %m-%d} ^fg(\#666)| \
