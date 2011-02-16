@@ -5,14 +5,6 @@
 -- xmonad wiki, so if you like this one you should check his stuff out.  I've
 -- adapted it to better fit my way of working, which is pretty Emacs-centric.
 --
--- NOTE: Those updating from earlier xmonad versions, who use
--- EwmhDesktops, safeSpawn, WindowGo, or the simple-status-bar
--- setup functions (dzen, xmobar) probably need to change
--- xmonad.hs, please see the notes below, or the following
--- link for more details:
---
--- http://www.haskell.org/haskellwiki/Xmonad/Notable_changes_since_0.8
---
 
 import Control.Monad (liftM2)
 import Data.Monoid
