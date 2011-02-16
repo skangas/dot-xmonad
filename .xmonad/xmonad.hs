@@ -50,30 +50,30 @@ import qualified Data.Map        as M
 
 ------------------------------------------------------------------------
 
+statusWidth "lenin"     = 900
+statusWidth "kollontaj" = 650
+statusWidth "castro"    = 600
+statusWidth _           = 600
+topWidth "lenin"     = 900
+topWidth "kollontaj" = 648
+topWidth "castro"    = 616
+topWidth _           = 600
+                                       
+
 myStatusBarFont = "-artwiz-nu.se-medium-r-normal-*-*-*-*-*-*-*-iso8859-1"
 myStatusBar host = "dzen2 -x '0' -y '0' -h '12' -ta 'l' "
-                   ++ "-w '"  ++ show (width host) ++ "' "
+                   ++ "-w '"  ++ show (statusWidth host) ++ "' "
                    ++ "-fg '" ++ myDzenFGColor     ++ "' "
                    ++ "-bg '" ++ myNormalBGColor   ++ "' "
                    ++ "-fn '" ++ myStatusBarFont   ++ "' "
                       where
-                        width "lenin"  = 900
-                        width "castro" = 600
-                        width _        = 600
 
 myTopBar host = "conky -c .conkytop | dzen2 -y '0' -h '12' -ta 'r' "
-                ++ "-x '"  ++ show (xpos host)  ++ "' "
-                ++ "-w '"  ++ show (width host) ++ "' "
+                ++ "-x '"  ++ show (statusWidth host)  ++ "' "
+                ++ "-w '"  ++ show (topWidth host) ++ "' "
                 ++ "-fg '" ++ myDzenFGColor     ++ "' "
                 ++ "-bg '" ++ myNormalBGColor   ++ "' "
                 ++ "-fn '" ++ myStatusBarFont   ++ "' "
-                    where
-                      width "lenin"  = 900
-                      width "castro" = 616
-                      width _        = 600
-                      xpos "lenin"   = 900
-                      xpos "castro"  = 600
-                      xpos _         = 600
 
 myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --heighttype pixel --height 5"
 
