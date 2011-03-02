@@ -58,7 +58,7 @@ myStatusBar host = "dzen2 -x '0' -y '0' -h '12' -ta 'l' "
                    ++ "-fn '" ++ myStatusBarFont   ++ "' "
                       where
 
-myTopBar host = "conky -c .conkytop | dzen2 -y '0' -h '12' -ta 'r' "
+myTopBar host = "conky -c ~/.xmonad/conkyrc | dzen2 -y '0' -h '12' -ta 'r' "
                 ++ "-x '"  ++ show (statusWidth host)  ++ "' "
                 ++ "-w '"  ++ show (topWidth host) ++ "' "
                 ++ "-fg '" ++ myDzenFGColor     ++ "' "
