@@ -12,6 +12,7 @@ import System.Exit
 import System.IO
 import System.Posix.Unistd
 import XMonad
+import XMonad.Actions.Search
 import XMonad.Actions.Warp
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -210,6 +211,8 @@ myFocusedBorderColor = "#ffff00"
 -- Key bindings. Add, modify or remove key bindings here.
 --
 
+tyda = searchEngine "tyda" "http://tyda.se/search?form=1&w_lang=&x=0&y=0&w="
+
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
@@ -258,6 +261,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Increment/Deincrement the number of windows in the master area
     , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
+
+    , ((modm              , xK_t),      do promptSearch defaultXPConfig tyda
+                                           windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
 
     -- Quit/Restart xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
