@@ -262,7 +262,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
 
-    , ((modm              , xK_t),      do promptSearch defaultXPConfig tyda
+    , ((modm .|. shiftMask, xK_t),      do promptSearch defaultXPConfig tyda
                                            windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
 
     -- Quit/Restart xmonad
