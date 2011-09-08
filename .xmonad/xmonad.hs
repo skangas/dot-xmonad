@@ -43,10 +43,10 @@ import qualified Data.Map        as M
 
 ------------------------------------------------------------------------
 
-statusWidth "huey"      = 900
+statusWidth "huey"      = 800
 statusWidth "kollontaj" = 650
 statusWidth _           = 600
-topWidth "huey"      = 900
+topWidth "huey"      = 1024
 topWidth "kollontaj" = 648
 topWidth _           = 600
                                        
