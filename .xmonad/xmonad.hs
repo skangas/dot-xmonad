@@ -12,6 +12,7 @@ import System.Exit
 import System.IO
 import System.Posix.Unistd
 import XMonad
+import XMonad.Actions.CycleWS
 import XMonad.Actions.Search
 import XMonad.Actions.Warp
 import XMonad.Hooks.DynamicLog
@@ -44,10 +45,10 @@ import qualified Data.Map        as M
 ------------------------------------------------------------------------
 
 statusWidth "huey"      = 800
-statusWidth "kollontaj" = 650
+statusWidth "kollontaj" = 550
 statusWidth _           = 600
 topWidth "huey"      = 1024
-topWidth "kollontaj" = 648
+topWidth "kollontaj" = 748
 topWidth _           = 600
                                        
 
@@ -216,9 +217,9 @@ tyda = searchEngine "tyda" "http://tyda.se/search?form=1&w_lang=&x=0&y=0&w="
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
-    , ((modm,               xK_a     ), spawn "amarok")
-    , ((modm,               xK_f     ), spawn "conkeror")
-    , ((modm .|. shiftMask, xK_f     ), spawn "iceweasel")
+--    , ((modm,               xK_a     ), spawn "amarok")
+    , ((modm,               xK_w     ), spawn "conkeror")
+    , ((modm .|. shiftMask, xK_w     ), spawn "iceweasel")
     , ((modm .|. shiftMask, xK_v     ), spawn "xterm -e alsamixer")
     , ((modm,               xK_j     ), runOrRaisePrompt defaultXPConfig)
     , ((modm .|. shiftMask, xK_j     ), spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
@@ -237,7 +238,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_r     ), refresh)
 
     -- Banish mouse pointer to top right
-    , ((modm,               xK_b     ), banishScreen UpperRight)
+    , ((modm,               xK_u     ), banishScreen UpperRight)
+
+    -- CycleWS
+    , ((modm,               xK_b     ), moveTo Prev NonEmptyWS)
+    , ((modm,               xK_f     ), moveTo Next NonEmptyWS)
+    , ((modm .|. shiftMask, xK_b     ), shiftToPrev)
+    , ((modm .|. shiftMask, xK_f     ), shiftToNext)
+    , ((modm,               xK_Right), nextScreen)
+    , ((modm,               xK_Left),  prevScreen)
+    , ((modm .|. shiftMask, xK_Right), shiftNextScreen)
+    , ((modm .|. shiftMask, xK_Left),  shiftPrevScreen)
+    , ((modm,               xK_z),     toggleWS)
 
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
@@ -272,24 +284,25 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
                                            spawn "killall conky"
                                            restart "xmonad" True)
     ]
-    ++
- 
-    --
+
+     --
     -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
     --
+    ++
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
+
 
     --
     -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
     --
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+    -- ++
+    -- [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+    --     | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+    --     , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
  
 -- Additional keybindings, used by additionalKeysP below
 myAdditionalKeys =
