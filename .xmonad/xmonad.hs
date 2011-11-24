@@ -217,12 +217,16 @@ tyda = searchEngine "tyda" "http://tyda.se/search?form=1&w_lang=&x=0&y=0&w="
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
---    , ((modm,               xK_a     ), spawn "amarok")
+
     , ((modm,               xK_w     ), spawn "conkeror")
     , ((modm .|. shiftMask, xK_w     ), spawn "iceweasel")
+
     , ((modm .|. shiftMask, xK_v     ), spawn "xterm -e alsamixer")
+    , ((modm .|. shiftMask, xK_z     ), spawn "urxvt -e ncmpcpp")
+
     , ((modm,               xK_j     ), spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
     , ((modm .|. shiftMask, xK_j     ), runOrRaisePrompt defaultXPConfig)
+
     , ((modm,               xK_s     ), sshPrompt defaultXPConfig)
 
     , ((modm .|. shiftMask, xK_c     ), kill)
