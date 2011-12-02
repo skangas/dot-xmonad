@@ -221,8 +221,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_w     ), spawn "conkeror")
     , ((modm .|. shiftMask, xK_w     ), spawn "iceweasel")
 
-    , ((modm .|. shiftMask, xK_v     ), spawn "urxvt -tr -tint green -sh 15 -e alsamixer")
-    , ((modm .|. shiftMask, xK_z     ), spawn "urxvt -tr -tint green -sh 15 -e ncmpcpp")
+    , ((modm .|. shiftMask, xK_v     ), spawn "urxvt -tr -tint yellow -sh 15 -e alsamixer")
+    , ((modm .|. shiftMask, xK_z     ), spawn "urxvt -tr -tint yellow -sh 15 -e ncmpcpp")
 
     , ((modm,               xK_j     ), spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
     , ((modm .|. shiftMask, xK_j     ), runOrRaisePrompt defaultXPConfig)
