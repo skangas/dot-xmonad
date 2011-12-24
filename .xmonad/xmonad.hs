@@ -215,7 +215,9 @@ myFocusedBorderColor = "#ffff00"
 tyda = searchEngine "tyda" "http://tyda.se/search?form=1&w_lang=&x=0&y=0&w="
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-    [ ((modm,               xK_Return), spawn $ XMonad.terminal conf)
+    [ ((modm,               xK_F12   ), spawn $ "xscreensaver-command --lock")
+
+    , ((modm,               xK_Return), spawn $ XMonad.terminal conf)
     , ((modm,               xK_e     ), spawn "emacsclient -c -a emacs")
 
     , ((modm,               xK_w     ), spawn "conkeror")
@@ -273,7 +275,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
  
     -- Push window back into tiling
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
- 
+
     -- Increment/Deincrement the number of windows in the master area
     , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
