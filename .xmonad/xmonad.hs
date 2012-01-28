@@ -215,7 +215,9 @@ myFocusedBorderColor = "#ffff00"
 tyda = searchEngine "tyda" "http://tyda.se/search?form=1&w_lang=&x=0&y=0&w="
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-    [ ((modm,               xK_F11   ), spawn $ "mplayer ~/.xmonad/rimshot.mp3")
+    [ ((modm .|. shiftMask, xK_F1    ), spawn $ "setxkbmap se_sv_dvorak")
+    , ((modm .|. shiftMask, xK_F2    ), spawn $ "setxkbmap se")
+    , ((modm,               xK_F11   ), spawn $ "mplayer ~/.xmonad/rimshot.mp3")
     , ((modm,               xK_F12   ), spawn $ "xscreensaver-command --lock")
 
     , ((modm,               xK_Return), spawn $ XMonad.terminal conf)
