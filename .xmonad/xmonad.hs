@@ -43,6 +43,46 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 ------------------------------------------------------------------------
+-- -- My password extension
+
+-- -- ## cabal is horrid
+-- -- sudo aptitude install xclip
+-- -- sudo cabal update
+-- -- sudo cabal install --global sha base64-bytestring
+
+-- import Data.ByteString.Base64
+-- import qualified Data.ByteString.Char8 as S
+-- import qualified Data.ByteString.Lazy.Char8 as L
+-- import Data.Digest.Pure.SHA
+-- import System.Environment
+-- -- import XMonad.Util.XSelection -- xmonad-contrib-0.10 needed...
+
+-- sha1_base64 :: [Char] -> [Char]
+-- sha1_base64 = S.unpack . encode . S.pack . L.unpack . bytestringDigest . sha1 . L.pack
+
+-- passwd :: [Char] -> [Char]
+-- passwd s = (take 8 $ sha1_base64 s) ++ "1a"
+
+-- mkPass :: [Char] -> IO [Char]
+-- mkPass site = do
+--   home <- getEnv "HOME"
+--   pass <- readFile (home ++ "/bin/.webpass")
+--   return $ passwd (pass ++ ":" ++ site)
+
+-- data PWPrompt = PWPrompt
+
+-- instance XPrompt PWPrompt where
+--   showXPrompt PWPrompt = "Site: "
+
+-- pwPrompt :: XPConfig -> X ()
+-- pwPrompt c = do
+--   sc <- io sshComplList
+--   mkXPrompt PWPrompt c (mkComplFunFromList []) toclip
+
+-- toclip :: String -> X ()
+-- toclip s = spawn $ "echo '" ++ s ++ "' | xclip"
+
+------------------------------------------------------------------------
 
 statusWidth "huey"      = 800
 statusWidth "kollontaj" = 550
