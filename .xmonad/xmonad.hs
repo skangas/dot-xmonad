@@ -38,7 +38,6 @@ import XMonad.Layout.IM
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 
- 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
