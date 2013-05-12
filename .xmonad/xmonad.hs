@@ -5,7 +5,6 @@
 -- xmonad wiki, so if you like this one you should check his stuff out.  I've
 -- adapted it to better fit my way of working, which is pretty Emacs-centric.
 --
-
 import Control.Monad (liftM2)
 import Data.Monoid
 import System.Exit
@@ -471,7 +470,7 @@ main = do
            , focusFollowsMouse  = myFocusFollowsMouse
            , borderWidth        = myBorderWidth
            , modMask            = myModMask
-           , numlockMask        = myNumlockMask
+--           , numlockMask        = myNumlockMask
            , workspaces         = myWorkspaces
            , normalBorderColor  = myNormalBorderColor
            , focusedBorderColor = myFocusedBorderColor
