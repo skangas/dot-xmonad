@@ -105,7 +105,7 @@ myTopBar host = "conky -c ~/.xmonad/conkyrc | dzen2 -y '0' -h '12' -ta 'r' "
                 ++ "-bg '" ++ myNormalBGColor   ++ "' "
                 ++ "-fn '" ++ myStatusBarFont   ++ "' "
 
-myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --heighttype pixel --height 5"
+myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --heighttype pixel --height 11"
 
 -- Urgency hint options:
 myUrgencyHook = withUrgencyHook dzenUrgencyHook
