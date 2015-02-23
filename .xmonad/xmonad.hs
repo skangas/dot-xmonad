@@ -10,7 +10,9 @@ import XMonad
 import XMonad.Actions.CycleWS
 import XMonad.Actions.Search
 import XMonad.Actions.Warp
+import XMonad.Actions.UpdatePointer
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName -- needed to work around buggy java
@@ -47,7 +49,7 @@ main = do
   dzen <- spawnPipe (myStatusBar host)
   topBar <- spawnPipe (myTopBar host)
   trayer <- spawnPipe myTrayer
-  xmonad $ myConfig host dzen
+  xmonad $ ewmh $ myConfig host dzen
 
 myConfig host dzen = myUrgencyHook $
      defaultConfig
@@ -66,7 +68,7 @@ myConfig host dzen = myUrgencyHook $
 --                    { ppOutput = hPutStrLn xmproc
 --                    , ppTitle = xmobarColor "green" "" . shorten 50
 --                    }
-        , logHook            = dynamicLogWithPP $ myDzenPP dzen
+        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer Nearest
         , startupHook        = do
                setWMName "LG3D"
                return ()
@@ -207,83 +209,21 @@ myNormalBorderColor  = "#151515"
 myFocusedBorderColor = "#ffff00"
 
 myKeys host dzen = myKeymap host (myConfig host dzen)
-myKeymap host conf
-  | elem host workHosts = limitedKeymap host conf
-  | otherwise     = defaultKeymap host conf        
-
--- Limited keymap for work NX environment
-limitedKeymap host conf =
-  -- mod-[F1..F12],       Switch to workspace N
-  -- mod-shift-[F1..F12], Move client to workspace N
-  [ ("M-" ++ m ++ k, windows $ f i)
-      | (i, k) <- zip (XMonad.workspaces conf) ["F1", "F2", "F3", "F4", "F5",
-                                                "F6", "F7", "F8", "F9"]
-      , (f, m) <- [ (W.greedyView, "")
-                  , (W.shift, "S-") ]
-  ]
-  ++
-  [ ("C-c M-<Space>",    sendMessage NextLayout)
-  -- , ("M-S-<space>", setLayout $ XMonad.layoutHook conf)
-  -- Move focus to the next window
-  , ("M-c n",         windows W.focusDown)
-  , ("M-c p",         windows W.focusUp)
-  , ("M-c m",         windows W.focusMaster)
-  , ("M-c M",       windows W.swapMaster)
-  , ("M-c N",       windows W.swapDown)
-  , ("M-c P",       windows W.swapUp)
-  , ("M-c t",         withFocused $ windows . W.sink)
-
-  , ("M-c M-r",         refresh)
-  , ("M-c M-u",         banishScreen UpperRight)
-
-  , ("M-c S-<F1>",    spawn $ "setxkbmap se_sv_dvorak")
-  , ("M-c S-<F2>",    spawn $ "setxkbmap se")
-  , ("M-c <F12>",     spawn $ "xscreensaver-command --lock")
-
-  , ("M-c <Return>",  spawn "rxvt")
-  , ("M-c e",         spawn "emacsclient -c -a emacs")
-
-  , ("M-c x c",       spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
-  , ("M-c x f",       spawn "firefox")
-  , ("M-c x r",       runOrRaisePrompt myXPConfig)
-  , ("M-c s",         sshPrompt myXPConfig)
-
-  , ("M-c S-c",       kill)
-  , ("M-c C-b",       sendMessage $ ToggleStruts)
-
-  , ("M-c '", namedScratchpadAction scratchpads "term")
-
-  , ("M-c Q", io (exitWith ExitSuccess))
-  , ("M-c q", do spawn "killall trayer"
-                 spawn "killall dzen2"
-                 spawn "killall conky"
-                 restart "xmonad" True)
-
-  -- CycleWS
-  , ("M-c b", moveTo Prev NonEmptyWS)
-  , ("M-c f", moveTo Next NonEmptyWS)
-  , ("M-c S-b", shiftToPrev)
-  , ("M-c S-f", shiftToNext)
-  , ("M-c <Right>", nextScreen)
-  , ("M-c <Left>",  prevScreen)
-  , ("M-c S-<Right>", shiftNextScreen)
-  , ("M-c S-<Left>",  shiftPrevScreen)
-  , ("M-c z",     toggleWS)
-
-  -- Shrink/Expand the master area
-  , ("M-c h", sendMessage Shrink)
-  , ("M-c l", sendMessage Expand)
-  ]
-
-defaultKeymap host conf =
+myKeymap host conf =
   -- mod-[1..],       Switch to workspace N
   -- mod-shift-[1..], Move client to workspace N
   -- mod-ctrl-[1..],  Switch to workspace N on other screen
   [ ("M-" ++ m ++ [k], windows $ f i)
       | (i, k) <- zip (XMonad.workspaces conf) "1234567890[]"
       , (f, m) <- [ (W.greedyView, "")
-                  , (W.shift, "S-") ]
+                  , (W.shift, "S-")]
   ]
+  ++
+  -- mod-{w,e,r} %! Switch to physical/Xinerama screens 1, 2, or 3
+  -- mod-shift-{w,e,r} %! Move client to screen 1, 2, or 3
+  [("M-" ++ m ++ [k], screenWorkspace sc >>= flip whenJust (windows . f))
+      | (k, sc) <- zip "we" [0..]
+      , (f, m) <- [(W.view, ""), (W.shift, "S-")]]
   ++
   [ ("M-<Space>",    sendMessage NextLayout)
   -- , ("M-S-<space>", setLayout $ XMonad.layoutHook conf)
@@ -304,10 +244,11 @@ defaultKeymap host conf =
   , ("M-<F12>",     spawn $ "xscreensaver-command --lock")
 
   , ("M-<Return>",  spawn "rxvt")
-  , ("M-e",         spawn "emacsclient -c -a emacs")
+  , ("M-x e",       spawn "emacsclient -c -a emacs")
 
   , ("M-x c",       spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
   , ("M-x f",       spawn "firefox")
+  , ("M-x l",       spawn "xscreensaver-command -lock")
   , ("M-x m",       spawn "thunderbird")
   , ("M-x p",       spawn "pidgin")
   , ("M-x x",       spawn "conkeror")
