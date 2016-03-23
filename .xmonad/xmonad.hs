@@ -36,8 +36,8 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.Simplest
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
-import XMonad.Layout.TwoPane
-import XMonad.Layout.WindowNavigation
+-- import XMonad.Layout.TwoPane
+-- import XMonad.Layout.WindowNavigation
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -338,7 +338,8 @@ myLayout =
     layoutHints $
     onWorkspace "6" gimpLayout $
     onWorkspace "8" (noBorders Simplest) $
-    tabbed shrinkText tabTheme ||| TwoPane (3/100) (1/2) ||| ThreeCol 1 (3/100) (1/3) ||| Full
+    tabbed shrinkText tabTheme ||| ThreeCol 1 (3/100) (1/3) ||| Full
+--  tabbed shrinkText tabTheme ||| TwoPane (3/100) (1/2) ||| ThreeCol 1 (3/100) (1/3) ||| Full
   where
     tabTheme = defaultTheme {
              decoHeight = 15,
