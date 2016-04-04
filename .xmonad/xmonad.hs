@@ -163,7 +163,7 @@ myManageHook = composeAll . concat $
     my5Shifts = []
     my6Shifts = ["Gimp"]
     my7Shifts = ["Virtual-Box", "Wine"]
-    my8Shifts = ["MPlayer"]
+    my8Shifts = ["mplayer2"]
     my9Shifts = ["Amarok"]
 
 -- XPConfig options:
