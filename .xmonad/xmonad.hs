@@ -365,7 +365,7 @@ myDzenPP h = defaultPP
     , ppUrgent = wrap (("^fg(" ++ myUrgentFGColor ++ ")^bg(" ++ myNormalBGColor ++ ")^p()^i(" ++ myIconDir ++ "/corner.xbm)^fg(" ++ myUrgentFGColor ++ ")")) "^fg()^bg()^p()" . \wsId -> dropIx wsId
     , ppSep = " "
     , ppWsSep = " "
-    , ppTitle = dzenColor ("" ++ myNormalFGColor ++ "") "" . wrap "< " " >"
+    , ppTitle = dzenColor ("" ++ myNormalFGColor ++ "") "" -- . wrap "< " " >"
     , ppLayout = dzenColor ("" ++ myNormalFGColor ++ "") "" .
         (\x -> case x of
         "Hinted Simplest" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-full.xbm)"
