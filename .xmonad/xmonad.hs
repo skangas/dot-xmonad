@@ -248,10 +248,12 @@ myKeymap host conf =
 
   , ("M-x c",       spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
   , ("M-x f",       spawn "firefox")
+  , ("M-x y",       spawn "conkeror")
   , ("M-x l",       spawn "xscreensaver-command -lock")
   , ("M-x m",       spawn "thunderbird")
   , ("M-x p",       spawn "pidgin")
-  , ("M-x x",       spawn "conkeror")
+  , ("M-x s",       spawn "skype")
+  , ("M-x g",       spawn "steam")
   , ("M-x r",       runOrRaisePrompt myXPConfig)
   -- , ("M-x t", do promptSearch myXPConfig tyda
   --                windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
