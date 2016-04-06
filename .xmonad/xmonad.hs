@@ -81,30 +81,30 @@ myConfig host dzen = myUrgencyHook $
 
 workHosts = ["eselnts1280"]
 
-statusWidth "huey"      = 800
-statusWidth "kollontaj" = 550
-statusWidth _           = 600
-topWidth "huey"      = 1024
-topWidth "kollontaj" = 748
-topWidth _           = 600
+leftStatusWidth "huey"      = 1200
+leftStatusWidth "kollontaj" = 550
+leftStatusWidth _           = 600
+rightStatusWidth "huey"      = 1232
+rightStatusWidth "kollontaj" = 748
+rightStatusWidth _           = 600
 
 
-myStatusBarFont = "-artwiz-nu.se-medium-r-normal-*-*-*-*-*-*-*-iso8859-1"
-myStatusBar host = "dzen2 -x '0' -y '0' -h '12' -ta 'l' "
-                   ++ "-w '"  ++ show (statusWidth host) ++ "' "
+-- myStatusBarFont = "-artwiz-nu.se-*-*-*-*-*-*-*-*-*-*-iso8859-1"
+myStatusBarFont = "-artwiz-aqui.se-*-*-*-*-16-*-*-*-*-*-*-*"
+myStatusBar host = "dzen2 -x '0' -y '0' -h '16' -ta 'l' "
+                   ++ "-w '"  ++ show (leftStatusWidth host) ++ "' "
                    ++ "-fg '" ++ myDzenFGColor     ++ "' "
                    ++ "-bg '" ++ myNormalBGColor   ++ "' "
                    ++ "-fn '" ++ myStatusBarFont   ++ "' "
-                      where
 
-myTopBar host = "conky -c ~/.xmonad/conkyrc | dzen2 -y '0' -h '12' -ta 'r' "
-                ++ "-x '"  ++ show (statusWidth host)  ++ "' "
-                ++ "-w '"  ++ show (topWidth host) ++ "' "
+myTopBar host = "conky -c ~/.xmonad/conkyrc | dzen2 -y '0' -h '16' -ta 'r' "
+                ++ "-x '"  ++ show (leftStatusWidth host)  ++ "' "
+                ++ "-w '"  ++ show (rightStatusWidth host) ++ "' "
                 ++ "-fg '" ++ myDzenFGColor     ++ "' "
                 ++ "-bg '" ++ myNormalBGColor   ++ "' "
                 ++ "-fn '" ++ myStatusBarFont   ++ "' "
 
-myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --heighttype pixel --height 11"
+myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --alpha 0 --heighttype pixel --height 16"
 
 -- Urgency hint options:
 myUrgencyHook = withUrgencyHook dzenUrgencyHook
@@ -115,7 +115,7 @@ myUrgencyHook = withUrgencyHook dzenUrgencyHook
 
 -- Color, font and iconpath definitions:
 myFont = "-xos4-terminus-medium-r-normal-*-12-*-*-*-c-*-iso10646-1"
-myIconDir = "/home/and1/.dzen"
+myIconDir = "/home/skangas/.xmonad/dzen2-icons"
 myNormalFGColor = "grey"
 myNormalBGColor = "#0f0f0f"
 myDzenFGColor = myNormalFGColor
@@ -204,7 +204,7 @@ myTheme = defaultTheme
 
 ------------------------------------------------------------------------
 
-myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+myWorkspaces    = ["1-emacs","2-web","3-im","4-term","5","6","7","8-media","9-virtual"]
 myNormalBorderColor  = "#151515"
 myFocusedBorderColor = "#ffff00"
 
@@ -368,7 +368,8 @@ myDzenPP h = defaultPP
     , ppTitle = dzenColor ("" ++ myNormalFGColor ++ "") "" . wrap "< " " >"
     , ppLayout = dzenColor ("" ++ myNormalFGColor ++ "") "" .
         (\x -> case x of
-        "Hinted Full" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-full.xbm)"
+        "Hinted Simplest" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-full.xbm)"
+        "Hinted Tabbed Simplest" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-tall-right.xbm)"
         "Hinted ResizableTall" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-tall-right.xbm)"
         "Hinted Mirror ResizableTall" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-mirror-bottom.xbm)"
         "Hinted combining Tabbed Bottom Simplest and Full with DragPane  Vertical 0.1 0.8" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-gimp.xbm)"
