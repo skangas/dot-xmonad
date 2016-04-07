@@ -51,9 +51,12 @@ main = do
   trayer <- spawnPipe myTrayer
   xmonad $ ewmh $ myConfig host dzen
 
+workHosts = ["eselnts1280"]
+myTerm host = if (elem host workHosts) then "xterm" else "rxvt -e zsh"
+
 myConfig host dzen = myUrgencyHook $
      defaultConfig
-        { terminal           = if (elem host workHosts) then "xterm" else "rxvt"
+        { terminal           = myTerm host
         , focusFollowsMouse  = True
         , borderWidth        = 1
         , modMask            = mod4Mask
@@ -78,8 +81,6 @@ myConfig host dzen = myUrgencyHook $
         -- , handleEventHook    = followOnlyIf (queryFocused whenToFollow)
         } `additionalKeysP` myKeys host dzen
 
-
-workHosts = ["eselnts1280"]
 
 leftStatusWidth "huey"      = 1200
 leftStatusWidth "kollontaj" = 550
@@ -152,7 +153,7 @@ myManageHook = composeAll . concat $
     ]
     where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
-    myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus", "Eclipse", "Ediff"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
+    myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus", "Eclipse"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
     myTFloats = ["Downloads", "Iceweasel Preferences", "Save As...", "Ediff"]
     myRFloats = []
     myIgnores = ["desktop_window", "kdesktop"]
@@ -243,7 +244,7 @@ myKeymap host conf =
   , ("M-S-<F2>",    spawn $ "setxkbmap se")
   , ("M-<F12>",     spawn $ "xscreensaver-command --lock")
 
-  , ("M-<Return>",  spawn "rxvt")
+  , ("M-<Return>",  spawn $ myTerm host)
   , ("M-x e",       spawn "emacsclient -c -a emacs")
 
   , ("M-x c",       spawn "exe=`dmenu_path | dmenu -b -nb black -nf grey` && eval \"exec $exe\"")
