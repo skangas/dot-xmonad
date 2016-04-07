@@ -251,6 +251,7 @@ myKeymap host conf =
   , ("M-x f",       spawn "firefox")
   , ("M-x y",       spawn "conkeror")
   , ("M-x l",       spawn "xscreensaver-command -lock")
+  , ("M-x o",       spawn "libreoffice")
   , ("M-x m",       spawn "thunderbird")
   , ("M-x p",       spawn "pidgin")
   , ("M-x s",       spawn "skype")
