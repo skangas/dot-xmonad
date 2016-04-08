@@ -298,6 +298,7 @@ myKeymap host conf =
   , ("M-z",     toggleWS)
 
     -- Generate password for weblogins
+   , ("M-S-g", AL.launchApp myXPConfig "webpass -old")
    , ("M-g", AL.launchApp myXPConfig "webpass")
 
   -- Shrink/Expand the master area
