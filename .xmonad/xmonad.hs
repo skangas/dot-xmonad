@@ -267,7 +267,7 @@ myKeymap host conf =
   , ("M-x s",       spawn "skype")
   , ("M-x g",       spawn "steam")
   , ("M-x r",       runOrRaisePrompt myXPConfig)
-  , ("M-x q",       pwPrompt myXPConfig)
+  , ("M-x q",       pwPrompt "@1a" 13 myXPConfig)
   -- , ("M-x t", do promptSearch myXPConfig tyda
   --                windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
   -- , ("M-x w",         spawn "iceweasel")
@@ -415,9 +415,8 @@ readMasterPassword = do
   pass <- liftIO $ readFile (home ++ "/bin/.webpass")
   return pass
 
-mkPass :: [Char] -> [Char] -> IO [Char]
-mkPass master site = do
-  return $ (flip (++)) "@1a" . take 13 $ enc master
+mkPass :: [Char] -> [Char] -> [Char]
+mkPass master site = enc master
   where
     enc master = sha1_base64 $ (trim master) ++ ":" ++ site
     trim = f . f
@@ -429,10 +428,12 @@ data PWPrompt = PWPrompt
 instance XPrompt PWPrompt where
   showXPrompt PWPrompt = "Site: "
 
-pwPrompt :: XPConfig -> X ()
-pwPrompt c = do
-  readMasterPassword <- liftIO readMasterPassword
-  mkXPrompt PWPrompt c (mkComplFunFromList []) (toclip . mkPass)
+pwPrompt :: [Char] -> Int -> XPConfig -> X ()
+pwPrompt end num c = do
+  master <- liftIO readMasterPassword
+  mkXPrompt PWPrompt c (mkComplFunFromList []) (toclip . pw . mkPass master)
+  where
+    pw = (flip (++)) end . take num
 
 toclip :: String -> X ()
 toclip s = spawn $ "echo '" ++ s ++ "' | xclip"
