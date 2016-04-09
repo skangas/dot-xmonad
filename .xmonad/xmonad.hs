@@ -324,11 +324,11 @@ myKeymap host conf =
  --    tyda = searchEngine "tyda" "http://tyda.se/search?form=1&w_lang=&x=0&y=0&w="
 
 scratchpads = [
-     NS "term"  (term ++ "-name scratchpad") (resource =? "scratchpad") termFloat,
+     NS "term"  (term ++ "-name scratchpad -e zsh") (resource =? "scratchpad") termFloat,
      NS "mixer" (term ++ "-e alsamixer") (title =? "alsamixer") mySPFloat,
      NS "music" (term ++ "-e ncmpcpp") (title =? "ncmpcpp") mySPFloat
  ] where
-     term = "urxvt -tr -sh 15 "
+     term = "rxvt -tr -sh 15 "
      mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3)
      termFloat = customFloating $ W.RationalRect 0.04 0.04 0.92 0.92
      role = stringProperty "WM_WINDOW_ROLE"
