@@ -15,7 +15,7 @@ ${if_up eth1}^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/net_wired.xbm) ^fg(\#7
 ${if_up eth2}^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/net_wired.xbm) ^fg(\#777)^i(/home/skangas/.xmonad/xbm8x8/net_down_03.xbm)^fg(\#ccc)${downspeed eth2} ^fg(\#777)^i(/home/skangas/.xmonad/xbm8x8/net_up_03.xbm)^fg(\#ccc)${upspeed eth2} ^fg(\#555)[eth2]    $endif\
 ${if_up wlan0}^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/net_wired.xbm) ^fg(\#777)^i(/home/skangas/.xmonad/xbm8x8/net_down_03.xbm)^fg(\#ccc)${downspeed wlan0} ^fg(\#777)^i(/home/skangas/.xmonad/xbm8x8/net_up_03.xbm)^fg(\#ccc)${upspeed wlan0} ^fg(\#555)[wlan0]    $endif\
 ^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/cpu.xbm) ^fg(\#ccc)$cpu% ^fg(\#666)   \
-^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/mem.xbm) ^fg(\#ccc)$memperc% ^fg(\#666)   \
+^ca(1,~/bin/sysinfo_popup.sh)^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/mem.xbm) ^fg(\#ccc)$memperc% ^fg(\#666)   ^ca()\
 ^fg(\#3475aa)^i(/home/skangas/.xmonad/xbm8x8/clock.xbm) \
 ^fg(\#ccc)${time %Y-%m-%d} ^fg(\#888)- \
 ^fg(\#ccc)${time %H:%M}
