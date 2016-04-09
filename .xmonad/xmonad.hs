@@ -49,7 +49,9 @@ import qualified Data.ByteString.Char8 as S
 import qualified Data.ByteString.Lazy.Char8 as L
 import Data.Digest.Pure.SHA
 import System.Environment
-import XMonad.Util.XSelection -- xmonad-contrib-0.10 needed...
+import System.Process
+import qualified XMonad.Util.Paste as Paste
+
 
 
 main :: IO()
@@ -268,7 +270,7 @@ myKeymap host conf =
   , ("M-x s",       spawn "skype")
   , ("M-x g",       spawn "steam")
   , ("M-x r",       runOrRaisePrompt myXPConfig)
-  , ("M-x q",       pwPrompt "@1a" 13 myXPConfig)
+  , ("M-x q",       pwPaster 13 "@1a" myXPConfig)
   -- , ("M-x t", do promptSearch myXPConfig tyda
   --                windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
   -- , ("M-x w",         spawn "iceweasel")
@@ -401,6 +403,7 @@ myDzenPP h = defaultPP
       -- remove number in front of name:
       dropIx id
         | ':' `elem` id = split_ ':' id
+        | id == "NSP"   = "" -- scratchpad
         | otherwise     = id
         where split_ c = drop 1 . dropWhile (/= c)
 
@@ -411,22 +414,23 @@ myDzenPP h = defaultPP
 -- cabal update
 -- cabal install sha base64-bytestring
 
-
-sha1_base64 :: [Char] -> [Char]
-sha1_base64 = S.unpack . encode . S.pack . L.unpack . bytestringDigest . sha1 . L.pack
-
--- readMasterPassword :: IO -> String
-readMasterPassword = do
-  home <- liftIO $ getEnv "HOME"
-  pass <- liftIO $ readFile (home ++ "/bin/.webpass")
-  return pass
-
-mkPass :: [Char] -> [Char] -> [Char]
-mkPass master site = enc master
+mkPass :: [Char] -> Int -> [Char] -> [Char] -> [Char]
+mkPass master num end site = trimWS $ append end $ take num $ enc master
   where
-    enc master = sha1_base64 $ (trim master) ++ ":" ++ site
-    trim = f . f
-    f = reverse . dropWhile isSpace
+    enc master = sha1_base64 $ (trimWS master) ++ ":" ++ site
+    append = flip (++)
+    trimWS :: [Char] -> [Char]
+    trimWS = f . f
+      where
+        f = reverse . dropWhile isSpace
+    sha1_base64 :: [Char] -> [Char]
+    sha1_base64 = S.unpack . encode . S.pack . L.unpack . bytestringDigest . sha1 . L.pack
+
+readMasterPassword :: IO [Char]
+readMasterPassword = do
+  home <- getEnv "HOME"
+  pass <- readFile (home ++ "/bin/.webpass")
+  return pass
 
 -- Xmonad stuff below
 data PWPrompt = PWPrompt
@@ -434,12 +438,26 @@ data PWPrompt = PWPrompt
 instance XPrompt PWPrompt where
   showXPrompt PWPrompt = "Site: "
 
-pwPrompt :: [Char] -> Int -> XPConfig -> X ()
-pwPrompt end num c = do
+pwPrompt :: Int -> [Char] -> XPConfig -> X ()
+pwPrompt num end c = do
   master <- liftIO readMasterPassword
-  mkXPrompt PWPrompt c (mkComplFunFromList []) (toclip . pw . mkPass master)
-  where
-    pw = (flip (++)) end . take num
+  mkXPrompt PWPrompt c (mkComplFunFromList []) (toclip . mkPass master num end)
 
 toclip :: String -> X ()
+-- toclip s = Paste.pasteString s
 toclip s = spawn $ "echo '" ++ s ++ "' | xclip"
+
+-- TODO: Fix this below
+
+readCurPage :: IO [Char]
+readCurPage = do
+  home <- getEnv "HOME"
+  url <- readProcess (home ++ "/bin/getffurl.py") [] []
+  return url
+
+pwPaster :: Int -> [Char] -> XPConfig -> X ()
+pwPaster num end c = do
+  master <- liftIO readMasterPassword
+  site <- liftIO readCurPage
+  -- inget händer efter detta
+  toclip $ mkPass master num end site
