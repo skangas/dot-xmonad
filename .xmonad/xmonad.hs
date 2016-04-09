@@ -42,6 +42,16 @@ import XMonad.Layout.ThreeColumns
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
+--- Needed for password extension below
+import Data.ByteString.Base64
+import Data.Char (isSpace)
+import qualified Data.ByteString.Char8 as S
+import qualified Data.ByteString.Lazy.Char8 as L
+import Data.Digest.Pure.SHA
+import System.Environment
+import XMonad.Util.XSelection -- xmonad-contrib-0.10 needed...
+
+
 main :: IO()
 main = do
 --  xmproc <- spawnPipe "/home/skangas/local/bin/xmobar /home/skangas/.xmobarrc"
@@ -257,6 +267,7 @@ myKeymap host conf =
   , ("M-x s",       spawn "skype")
   , ("M-x g",       spawn "steam")
   , ("M-x r",       runOrRaisePrompt myXPConfig)
+  , ("M-x q",       pwPrompt myXPConfig)
   -- , ("M-x t", do promptSearch myXPConfig tyda
   --                windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
   -- , ("M-x w",         spawn "iceweasel")
@@ -386,44 +397,42 @@ myDzenPP h = defaultPP
     dropIx wsId = if (':' `elem` wsId) then drop 2 wsId else wsId -- remove number in front of name
     staticWs = [] -- WAS take 1 myWorkspaces
 
-------------------------------------------------------------------------
--- -- My password extension
 
--- -- ## cabal is horrid
--- -- sudo aptitude install xclip
--- -- sudo cabal update
--- -- sudo cabal install --global sha base64-bytestring
+-- My password extension -------------------------------------------------------
 
--- import Data.ByteString.Base64
--- import qualified Data.ByteString.Char8 as S
--- import qualified Data.ByteString.Lazy.Char8 as L
--- import Data.Digest.Pure.SHA
--- import System.Environment
--- -- import XMonad.Util.XSelection -- xmonad-contrib-0.10 needed...
+-- ## cabal is horrid
+-- sudo apt-get install xclip libghc-base64-bytestring-dev
+-- cabal update
+-- cabal install sha base64-bytestring
 
--- sha1_base64 :: [Char] -> [Char]
--- sha1_base64 = S.unpack . encode . S.pack . L.unpack . bytestringDigest . sha1 . L.pack
 
--- passwd :: [Char] -> [Char]
--- passwd s = (take 8 $ sha1_base64 s) ++ "1a"
+sha1_base64 :: [Char] -> [Char]
+sha1_base64 = S.unpack . encode . S.pack . L.unpack . bytestringDigest . sha1 . L.pack
 
--- mkPass :: [Char] -> IO [Char]
--- mkPass site = do
---   home <- getEnv "HOME"
---   pass <- readFile (home ++ "/bin/.webpass")
---   return $ passwd (pass ++ ":" ++ site)
+-- readMasterPassword :: IO -> String
+readMasterPassword = do
+  home <- liftIO $ getEnv "HOME"
+  pass <- liftIO $ readFile (home ++ "/bin/.webpass")
+  return pass
 
--- data PWPrompt = PWPrompt
+mkPass :: [Char] -> [Char] -> IO [Char]
+mkPass master site = do
+  return $ (flip (++)) "@1a" . take 13 $ enc master
+  where
+    enc master = sha1_base64 $ (trim master) ++ ":" ++ site
+    trim = f . f
+    f = reverse . dropWhile isSpace
 
--- instance XPrompt PWPrompt where
---   showXPrompt PWPrompt = "Site: "
+-- Xmonad stuff below
+data PWPrompt = PWPrompt
 
--- pwPrompt :: XPConfig -> X ()
--- pwPrompt c = do
---   sc <- io sshComplList
---   mkXPrompt PWPrompt c (mkComplFunFromList []) toclip
+instance XPrompt PWPrompt where
+  showXPrompt PWPrompt = "Site: "
 
--- toclip :: String -> X ()
--- toclip s = spawn $ "echo '" ++ s ++ "' | xclip"
+pwPrompt :: XPConfig -> X ()
+pwPrompt c = do
+  readMasterPassword <- liftIO readMasterPassword
+  mkXPrompt PWPrompt c (mkComplFunFromList []) (toclip . mkPass)
 
-------------------------------------------------------------------------
+toclip :: String -> X ()
+toclip s = spawn $ "echo '" ++ s ++ "' | xclip"
