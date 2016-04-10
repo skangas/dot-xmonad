@@ -158,7 +158,7 @@ myManageHook = composeAll . concat $
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!6) | x <- my7Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!7) | x <- my8Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!8) | x <- my9Shifts]
-    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!8) | x <- my9Shifts]
+    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo (myWorkspaces!!9) | x <- my10Shifts]
     , [ namedScratchpadManageHook scratchpads ]
     ]
     where
@@ -169,13 +169,14 @@ myManageHook = composeAll . concat $
     myIgnores = ["desktop_window", "kdesktop"]
     my1Shifts = ["Emacs"]
     my2Shifts = ["Conkeror", "Iceweasel", "Firefox"]
-    my3Shifts = ["Ekiga","Skype","Pidgin"]
+    my3Shifts = []
     my4Shifts = []
     my5Shifts = []
     my6Shifts = ["Gimp"]
     my7Shifts = ["Virtual-Box", "Wine"]
     my8Shifts = ["mplayer2"]
     my9Shifts = ["Amarok"]
+    my10Shifts = ["Ekiga","Skype","Pidgin"]
 
 -- XPConfig options:
 myXPConfig = defaultXPConfig
@@ -215,7 +216,7 @@ myTheme = defaultTheme
 
 ------------------------------------------------------------------------
 
-myWorkspaces    = ["1-emacs","2-web","3-im","4-term","5","6","7","8-media","9-virtual"]
+myWorkspaces    = ["1-emacs","2-web","3","4","5","6","7","8-media","9-virtual","10-im","11","12-torrent"]
 myNormalBorderColor  = "#151515"
 myFocusedBorderColor = "#ffff00"
 
