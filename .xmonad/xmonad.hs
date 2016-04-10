@@ -1,5 +1,5 @@
 --
--- skangas xmonad configuration
+-- skangas' xmonad configuration
 --
 import Control.Monad (liftM2)
 import Data.Monoid
@@ -216,7 +216,7 @@ myTheme = defaultTheme
 
 ------------------------------------------------------------------------
 
-myWorkspaces    = ["1-emacs","2-web","3","4","5","6","7","8-media","9-virtual","10-im","11","12-torrent"]
+myWorkspaces    = ["1:emacs","2:www","3","4","5","6","7","8","9-virt","10-im","11-irc","12-tor"]
 myNormalBorderColor  = "#151515"
 myFocusedBorderColor = "#ffff00"
 
@@ -352,7 +352,9 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 myLayout =
     smartBorders $
     avoidStruts $
-    layoutHints $
+    -- layoutHints $ -- Why was this enabled?  Could it have something to od
+    --               -- with scrolling in emacs?  Re-enable this if problems
+    --               -- crop up.   -- skangas @ 2016-04-10
     onWorkspace "6" gimpLayout $
     onWorkspace "8" (noBorders Simplest) $
     tabbed shrinkText tabTheme ||| ThreeCol 1 (3/100) (1/3) ||| Full
@@ -374,30 +376,33 @@ myLayout =
 
 -- dynamicLog pretty printer for dzen:
 myDzenPP h = defaultPP
-    { ppCurrent = wrap ("^fg(" ++ myUrgentFGColor ++ ")^bg(" ++ myFocusedBGColor ++ ")^p()^i(" ++ myIconDir ++ "/corner.xbm)^fg(" ++ myNormalFGColor ++ ")") "^fg()^bg()^p()" . \wsId -> dropIx wsId
-    , ppVisible = wrap ("^fg(" ++ myNormalFGColor ++ ")^bg(" ++ myNormalBGColor ++ ")^p()^i(" ++ myIconDir ++ "/corner.xbm)^fg(" ++ myNormalFGColor ++ ")") "^fg()^bg()^p()" . \wsId -> dropIx wsId
-    , ppHidden = wrap ("^i(" ++ myIconDir ++ "/corner.xbm)") "^fg()^bg()^p()" . \wsId -> if (':' `elem` wsId) then drop 2 wsId else wsId -- don't use ^fg() here!!
-    --, ppHiddenNoWindows = wrap ("^fg(" ++ myDzenFGColor ++ ")^bg()^p()^i(" ++ myIconDir ++ "/corner.xbm)") "^fg()^bg()^p()" . \wsId -> dropIx wsId
-    , ppHiddenNoWindows = \wsId -> if wsId `notElem` staticWs then "" else wrap ("^fg(" ++ myDzenFGColor ++ ")^bg()^p()^i(" ++ myIconDir ++ "/corner.xbm)") "^fg()^bg()^p()" . dropIx $ wsId
-    , ppUrgent = wrap (("^fg(" ++ myUrgentFGColor ++ ")^bg(" ++ myNormalBGColor ++ ")^p()^i(" ++ myIconDir ++ "/corner.xbm)^fg(" ++ myUrgentFGColor ++ ")")) "^fg()^bg()^p()" . \wsId -> dropIx wsId
-    , ppSep = " "
-    , ppWsSep = " "
-    , ppTitle = dzenColor ("" ++ myNormalFGColor ++ "") "" -- . wrap "< " " >"
-    , ppLayout = dzenColor ("" ++ myNormalFGColor ++ "") "" .
+    { ppCurrent = activeCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
+    , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
+    , ppHidden = inactiveCorner . dropIx
+    , ppHiddenNoWindows = \wsId -> ""
+    , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
+    , ppSep = "   "
+    , ppWsSep = "  "
+    , ppTitle = dzenColor myNormalFGColor "" . wrap ">       " ""
+    , ppLayout = dzenColor myNormalFGColor "" .
         (\x -> case x of
-        "Hinted Simplest" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-full.xbm)"
-        "Hinted Tabbed Simplest" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-tall-right.xbm)"
-        "Hinted ResizableTall" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-tall-right.xbm)"
-        "Hinted Mirror ResizableTall" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-mirror-bottom.xbm)"
-        "Hinted combining Tabbed Bottom Simplest and Full with DragPane  Vertical 0.1 0.8" -> "^fg(" ++ myIconFGColor ++ ")^i(" ++ myIconDir ++ "/layout-gimp.xbm)"
+        "Full" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
+        "Tabbed Simplest" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
+        "ThreeCol" -> dzenColor myIconFGColor "" $ icon "layout-threecol.xbm"
         _ -> x
         )
     , ppOutput = hPutStrLn h
     }
     where
-    dropIx wsId = if (':' `elem` wsId) then drop 2 wsId else wsId -- remove number in front of name
-    staticWs = [] -- WAS take 1 myWorkspaces
-
+      -- shorthands:
+      activeCorner = wrap (dzenColor "#FFFFFF" myFocusedBGColor (icon "corner.xbm")) ""
+      inactiveCorner = wrap (dzenColor myNormalFGColor myNormalBGColor (icon "corner.xbm")) ""
+      icon i = "^i(" ++ myIconDir ++ "/" ++ i ++ ")"
+      -- remove number in front of name:
+      dropIx id
+        | ':' `elem` id = split_ ':' id
+        | otherwise     = id
+        where split_ c = drop 1 . dropWhile (/= c)
 
 -- My password extension -------------------------------------------------------
 
