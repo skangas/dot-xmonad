@@ -166,7 +166,7 @@ myManageHook = composeAll . concat $
     where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
     myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus", "Eclipse"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
-    myTFloats = ["Downloads", "Iceweasel Preferences", "Save As...", "Ediff"]
+    myTFloats = ["Downloads", "Iceweasel Preferences", "Save As...", "Ediff", "SK Fractals"]
     myRFloats = []
     myIgnores = ["desktop_window", "kdesktop"]
     my1Shifts = ["Emacs"]
@@ -270,7 +270,7 @@ myKeymap host conf =
   , ("M-x s",       spawn "skype")
   , ("M-x g",       spawn "steam")
   , ("M-x r",       runOrRaisePrompt myXPConfig)
-  , ("M-x q",       pwPaster 13 "@1a" myXPConfig)
+  -- , ("M-x q",       pwPaster 13 "@1a" myXPConfig)
   -- , ("M-x t", do promptSearch myXPConfig tyda
   --                windows (W.greedyView ((XMonad.workspaces conf) !! 1)))
   -- , ("M-x w",         spawn "iceweasel")
@@ -414,6 +414,7 @@ myDzenPP h = defaultPP
 -- cabal update
 -- cabal install sha base64-bytestring
 
+{--
 mkPass :: [Char] -> Int -> [Char] -> [Char] -> [Char]
 mkPass master num end site = trimWS $ append end $ take num $ enc master
   where
@@ -461,3 +462,4 @@ pwPaster num end c = do
   site <- liftIO readCurPage
   -- inget händer efter detta
   toclip $ mkPass master num end site
+--}
