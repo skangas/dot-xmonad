@@ -43,14 +43,14 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 --- Needed for password extension below
-import Data.ByteString.Base64
-import Data.Char (isSpace)
-import qualified Data.ByteString.Char8 as S
-import qualified Data.ByteString.Lazy.Char8 as L
-import Data.Digest.Pure.SHA
-import System.Environment
-import System.Process
-import qualified XMonad.Util.Paste as Paste
+-- import Data.ByteString.Base64
+-- import Data.Char (isSpace)
+-- import qualified Data.ByteString.Char8 as S
+-- import qualified Data.ByteString.Lazy.Char8 as L
+-- import Data.Digest.Pure.SHA
+-- import System.Environment
+-- import System.Process
+-- import qualified XMonad.Util.Paste as Paste
 
 
 
@@ -166,7 +166,7 @@ myManageHook = composeAll . concat $
     where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
     myCFloats = ["Ekiga", "Nvidia-settings", "XCalc", "Xmessage", "java-lang-Thread", "LCSMain", "Nautilus", "Eclipse"] --"MPlayer", "Nitrogen", "XFontSel", WM_CLASS(STRING) = "sun-awt-X11-XFramePeer", "java-lang-Thread"
-    myTFloats = ["Downloads", "Iceweasel Preferences", "Save As...", "Ediff", "SK Fractals"]
+    myTFloats = ["Downloads", "Iceweasel Preferences", "Save As...", "SK Fractals"]
     myRFloats = []
     myIgnores = ["desktop_window", "kdesktop"]
     my1Shifts = ["Emacs"]
