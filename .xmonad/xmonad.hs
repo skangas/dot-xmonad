@@ -83,7 +83,7 @@ myConfig host dzen = myUrgencyHook $
 --                    { ppOutput = hPutStrLn xmproc
 --                    , ppTitle = xmobarColor "green" "" . shorten 50
 --                    }
-        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer Nearest
+        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer (0.5, 0.5) (1, 1)
         , startupHook        = do
                setWMName "LG3D"
                return ()
@@ -94,10 +94,10 @@ myConfig host dzen = myUrgencyHook $
         } `additionalKeysP` myKeys host dzen
 
 
-leftStatusWidth "huey"      = 1200
+leftStatusWidth "joffe"      = 1200
 leftStatusWidth "kollontaj" = 550
 leftStatusWidth _           = 600
-rightStatusWidth "huey"      = 1232
+rightStatusWidth "joffe"      = 1232
 rightStatusWidth "kollontaj" = 748
 rightStatusWidth _           = 600
 
