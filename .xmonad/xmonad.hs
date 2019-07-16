@@ -103,6 +103,7 @@ rightStatusWidth _           = 600
 
 
 -- myStatusBarFont = "-artwiz-nu.se-*-*-*-*-*-*-*-*-*-*-iso8859-1"
+-- myStatusBarFont = "-artwiz-lime.se-*-*-*-*-16-*-*-*-*-*-*-*"
 myStatusBarFont = "-artwiz-aqui.se-*-*-*-*-16-*-*-*-*-*-*-*"
 myStatusBar host = "dzen2 -x '0' -y '0' -h '16' -ta 'l' "
                    ++ "-w '"  ++ show (leftStatusWidth host) ++ "' "
