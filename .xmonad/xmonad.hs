@@ -17,7 +17,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName -- needed to work around buggy java
 import XMonad.Hooks.UrgencyHook
-import XMonad.Prompt
+import XMonad.Prompt (amberXPConfig)
 import XMonad.Prompt.AppLauncher as AL
 import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Ssh
@@ -83,12 +83,12 @@ myConfig host dzen = myUrgencyHook $
 --                    { ppOutput = hPutStrLn xmproc
 --                    , ppTitle = xmobarColor "green" "" . shorten 50
 --                    }
-        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer (0.5, 0.5) (1, 1)
+--        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer (0.5, 0.5) (1, 1)
         , startupHook        = do
                setWMName "LG3D"
                return ()
                checkKeymap (myConfig host dzen) (myKeys host dzen) -- needed to work around buggy java
-        , layoutHook         = myLayout
+        --, layoutHook         = myLayout
         , manageHook         = manageDocks <+> myManageHook
         -- , handleEventHook    = followOnlyIf (queryFocused whenToFollow)
         } `additionalKeysP` myKeys host dzen
@@ -182,40 +182,40 @@ myManageHook = composeAll . concat $
     my10Shifts = ["Ekiga","Skype","Pidgin"]
 
 -- XPConfig options:
-myXPConfig = defaultXPConfig
-    { font = "" ++ myFont ++ ""
-    , bgColor = "" ++ myNormalBGColor ++ ""
-    , fgColor = "" ++ myNormalFGColor ++ ""
-    , fgHLight = "" ++ myNormalFGColor ++ ""
-    , bgHLight = "" ++ myUrgentBGColor ++ ""
-    , borderColor = "" ++ myFocusedBorderColor ++ ""
-    , promptBorderWidth = 1
-    , position = Bottom
-    , height = 16
-    , historySize = 100
-    --, historyFilter = ""
-    --, promptKeymap = ""
-    --, completionKey = ""
-    --, defaultText = ""
-    --, autoComplete = "KeySym"
-    --, showCompletionOnTab = ""
-    }
+myXPConfig = amberXPConfig
+--    { font = "" ++ myFont ++ ""
+--    , bgColor = "" ++ myNormalBGColor ++ ""
+--    , fgColor = "" ++ myNormalFGColor ++ ""
+--    , fgHLight = "" ++ myNormalFGColor ++ ""
+--    , bgHLight = "" ++ myUrgentBGColor ++ ""
+--    , borderColor = "" ++ myFocusedBorderColor ++ ""
+--    , promptBorderWidth = 1
+--    , position = Bottom
+--    , height = 16
+--    , historySize = 100
+--    --, historyFilter = ""
+--    --, promptKeymap = ""
+--    --, completionKey = ""
+--    --, defaultText = ""
+--    --, autoComplete = "KeySym"
+--    --, showCompletionOnTab = ""
+--    }
 
 -- Theme options:
-myTheme = defaultTheme
-    { activeColor = "" ++ myFocusedBGColor ++ ""
-    , inactiveColor = "" ++ myDzenBGColor ++ ""
-    , urgentColor = "" ++ myUrgentBGColor ++ ""
-    , activeBorderColor = "" ++ myFocusedBorderColor ++ ""
-    , inactiveBorderColor = "" ++ myNormalBorderColor ++ ""
-    , urgentBorderColor = "" ++ myNormalBorderColor ++ ""
-    , activeTextColor = "" ++ myFocusedFGColor ++ ""
-    , inactiveTextColor = "" ++ myDzenFGColor ++ ""
-    , urgentTextColor = "" ++ myUrgentFGColor ++ ""
-    , fontName = "" ++ myFont ++ ""
-    --, decoWidth = ""
-    --, decoHeight = ""
-    }
+-- myTheme = defaultTheme
+--     { activeColor = "" ++ myFocusedBGColor ++ ""
+--     , inactiveColor = "" ++ myDzenBGColor ++ ""
+--     , urgentColor = "" ++ myUrgentBGColor ++ ""
+--     , activeBorderColor = "" ++ myFocusedBorderColor ++ ""
+--     , inactiveBorderColor = "" ++ myNormalBorderColor ++ ""
+--     , urgentBorderColor = "" ++ myNormalBorderColor ++ ""
+--     , activeTextColor = "" ++ myFocusedFGColor ++ ""
+--     , inactiveTextColor = "" ++ myDzenFGColor ++ ""
+--     , urgentTextColor = "" ++ myUrgentFGColor ++ ""
+--     , fontName = "" ++ myFont ++ ""
+--     --, decoWidth = ""
+--     --, decoHeight = ""
+--     }
 
 ------------------------------------------------------------------------
 
@@ -352,61 +352,51 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-myLayout =
-    smartBorders $
-    avoidStruts $
-    -- layoutHints $ -- Why was this enabled?  Could it have something to od
-    --               -- with scrolling in emacs?  Re-enable this if problems
-    --               -- crop up.   -- skangas @ 2016-04-10
-    onWorkspace "6" gimpLayout $
-    onWorkspace "8" (noBorders Simplest) $
-    tabbed shrinkText tabTheme ||| ThreeCol 1 (3/100) (1/3) ||| Full
---  tabbed shrinkText tabTheme ||| TwoPane (3/100) (1/2) ||| ThreeCol 1 (3/100) (1/3) ||| Full
-  where
-    tabTheme = defaultTheme {
-             decoHeight = 15,
-             fontName = "lime.se"}
-    resizableTile = ResizableTall nmaster delta ratio []
-    -- gimpLayout = tabbedLayout ||| Full
-    -- tabbedLayout = tabbedBottomAlways shrinkText myTheme
-    gimpLayout = withIM (0.11) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.15) (Role "gimp-dock") Full
-    -- The default number of windows in the master pane
-    nmaster = 1
-    -- Default proportion of screen occupied by master pane
-    ratio = toRational (2/(1+sqrt(5)::Double))
-    -- Percent of screen to increment by when resizing panes
-    delta = 3/100
+--myLayout =
+--    smartBorders $
+--    avoidStruts $
+--    onWorkspace "6" gimpLayout $
+--    onWorkspace "8" (noBorders Simplest)
+--  where
+--    resizableTile = ResizableTall nmaster delta ratio []
+--    gimpLayout = withIM (0.11) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.15) (Role "gimp-dock") Full
+--    -- The default number of windows in the master pane
+--    nmaster = 1
+--    -- Default proportion of screen occupied by master pane
+--    ratio = toRational (2/(1+sqrt(5)::Double))
+--    -- Percent of screen to increment by when resizing panes
+--    delta = 3/100
 
 -- dynamicLog pretty printer for dzen:
-myDzenPP h = defaultPP
-    { ppCurrent = activeCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
-    , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
-    , ppHidden = inactiveCorner . dropIx
-    , ppHiddenNoWindows = \wsId -> ""
-    , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
-    , ppSep = "   "
-    , ppWsSep = "  "
-    , ppTitle = dzenColor myNormalFGColor "" . wrap ">       " ""
-    , ppLayout = dzenColor myNormalFGColor "" .
-        (\x -> case x of
-        "Full" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
-        "Tabbed Simplest" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
-        "ThreeCol" -> dzenColor myIconFGColor "" $ icon "layout-threecol.xbm"
-        _ -> x
-        )
-    , ppOutput = hPutStrLn h
-    }
-    where
-      -- shorthands:
-      activeCorner = wrap (dzenColor "#FFFFFF" myFocusedBGColor (icon "corner.xbm")) ""
-      inactiveCorner = wrap (dzenColor myNormalFGColor myNormalBGColor (icon "corner.xbm")) ""
-      icon i = "^i(" ++ myIconDir ++ "/" ++ i ++ ")"
-      -- remove number in front of name:
-      dropIx id
-        | ':' `elem` id = split_ ':' id
-        | id == "NSP"   = "" -- scratchpad
-        | otherwise     = id
-        where split_ c = drop 1 . dropWhile (/= c)
+--myDzenPP h = defaultPP
+--    { ppCurrent = activeCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
+--    , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
+--    , ppHidden = inactiveCorner . dropIx
+--    , ppHiddenNoWindows = \wsId -> ""
+--    , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
+--    , ppSep = "   "
+--    , ppWsSep = "  "
+--    , ppTitle = dzenColor myNormalFGColor "" . wrap ">       " ""
+--    , ppLayout = dzenColor myNormalFGColor "" .
+--        (\x -> case x of
+--        "Full" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
+--        "Tabbed Simplest" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
+--        "ThreeCol" -> dzenColor myIconFGColor "" $ icon "layout-threecol.xbm"
+--        _ -> x
+--        )
+--    , ppOutput = hPutStrLn h
+--    }
+--    where
+--      -- shorthands:
+--      activeCorner = wrap (dzenColor "#FFFFFF" myFocusedBGColor (icon "corner.xbm")) ""
+--      inactiveCorner = wrap (dzenColor myNormalFGColor myNormalBGColor (icon "corner.xbm")) ""
+--      icon i = "^i(" ++ myIconDir ++ "/" ++ i ++ ")"
+--      -- remove number in front of name:
+--      dropIx id
+--        | ':' `elem` id = split_ ':' id
+--        | id == "NSP"   = "" -- scratchpad
+--        | otherwise     = id
+--        where split_ c = drop 1 . dropWhile (/= c)
 
 -- My password extension -------------------------------------------------------
 
