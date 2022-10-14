@@ -26,16 +26,20 @@ import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run
 import XMonad.Util.Scratchpad
 
-import XMonad.Layout.IM
+-- import XMonad.Layout.IM
 import XMonad.Layout.LayoutHints
 import XMonad.Layout.Magnifier
+import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Simplest
+import XMonad.Layout.TwoPane
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.MultiToggle
+import XMonad.Layout.MultiToggle.Instances
 -- import XMonad.Layout.TwoPane
 -- import XMonad.Layout.WindowNavigation
 
@@ -67,10 +71,10 @@ workHosts = ["eselnts1280"]
 myTerm host = if (elem host workHosts) then "xterm" else "rxvt -e zsh"
 
 myConfig host dzen = myUrgencyHook $
-     defaultConfig
+     def
         { terminal           = myTerm host
-        , focusFollowsMouse  = True
-        , borderWidth        = 1
+        , focusFollowsMouse  = False
+        , borderWidth        = 2
         , modMask            = mod4Mask
 --        , numlockMask        = 0
         , workspaces         = myWorkspaces
@@ -88,7 +92,7 @@ myConfig host dzen = myUrgencyHook $
                setWMName "LG3D"
                return ()
                checkKeymap (myConfig host dzen) (myKeys host dzen) -- needed to work around buggy java
-        --, layoutHook         = myLayout
+        --, layoutHook         = myLayoutHook
         , manageHook         = manageDocks <+> myManageHook
         -- , handleEventHook    = followOnlyIf (queryFocused whenToFollow)
         } `additionalKeysP` myKeys host dzen
@@ -302,8 +306,8 @@ myKeymap host conf =
                restart "xmonad" True)
 
   -- CycleWS
-  , ("M-b", moveTo Prev NonEmptyWS)
-  , ("M-f", moveTo Next NonEmptyWS)
+  , ("M-b", moveTo Prev $ Not emptyWS)
+  , ("M-f", moveTo Next $ Not emptyWS)
   , ("M-S-b", shiftToPrev)
   , ("M-S-f", shiftToNext)
   , ("M-<Right>", nextScreen)
@@ -352,20 +356,25 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
---myLayout =
---    smartBorders $
---    avoidStruts $
---    onWorkspace "6" gimpLayout $
---    onWorkspace "8" (noBorders Simplest)
---  where
---    resizableTile = ResizableTall nmaster delta ratio []
---    gimpLayout = withIM (0.11) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.15) (Role "gimp-dock") Full
---    -- The default number of windows in the master pane
---    nmaster = 1
---    -- Default proportion of screen occupied by master pane
---    ratio = toRational (2/(1+sqrt(5)::Double))
---    -- Percent of screen to increment by when resizing panes
---    delta = 3/100
+myLayoutHook =
+  -- avoid overlapping my dzen status bar.
+  avoidStruts $
+
+  mkToggle1 NBFULL $                                  -- (14)
+  mkToggle1 REFLECTX $                                -- (14,13)
+  mkToggle1 REFLECTY $                                -- (14,13)
+  mkToggle1 NOBORDERS $                               --  "
+  mkToggle1 MIRROR $                                  --  "
+
+  -- borders automatically disappear for fullscreen windows.
+  smartBorders $
+
+  -- All other workspaces start tall and can switch to a grid layout with the
+  -- focused window magnified.
+  myTiled ||| TwoPane (3/100) (1/2)
+  where
+    -- use ResizableTall instead of Tall, but still call it "Tall".
+    myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
 -- dynamicLog pretty printer for dzen:
 --myDzenPP h = defaultPP
