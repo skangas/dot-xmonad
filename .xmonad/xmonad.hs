@@ -67,15 +67,12 @@ main = do
   trayer <- spawnPipe myTrayer
   xmonad $ ewmh $ myConfig host dzen
 
-workHosts = ["eselnts1280"]
-myTerm host = if (elem host workHosts) then "xterm" else "rxvt -e zsh"
-
 myConfig host dzen = myUrgencyHook $
      def
         { terminal           = myTerm host
         , focusFollowsMouse  = False
-        , borderWidth        = 2
-        , modMask            = mod4Mask
+        , borderWidth        = 2           -- in pixels
+        , modMask            = mod4Mask    -- use super (Emacs)
 --        , numlockMask        = 0
         , workspaces         = myWorkspaces
         , normalBorderColor  = myNormalBorderColor
@@ -96,6 +93,10 @@ myConfig host dzen = myUrgencyHook $
         , manageHook         = manageDocks <+> myManageHook
         -- , handleEventHook    = followOnlyIf (queryFocused whenToFollow)
         } `additionalKeysP` myKeys host dzen
+  where
+    workHosts = ["eselnts1280"]
+    myTerm host = if (elem host workHosts) then "xterm" else "rxvt -e zsh"
+
 
 
 leftStatusWidth "joffe"      = 1200
