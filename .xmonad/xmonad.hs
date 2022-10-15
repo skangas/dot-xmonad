@@ -56,48 +56,10 @@ import qualified Data.Map        as M
 -- import System.Process
 -- import qualified XMonad.Util.Paste as Paste
 
+-- customization options
 
-
-main :: IO()
-main = do
---  xmproc <- spawnPipe "/home/skangas/local/bin/xmobar /home/skangas/.xmobarrc"
-  host <- fmap nodeName getSystemID
-  dzen <- spawnPipe (myStatusBar host)
-  topBar <- spawnPipe (myTopBar host)
-  trayer <- spawnPipe myTrayer
-  xmonad $ ewmh $ myConfig host dzen
-
-myConfig host dzen = myUrgencyHook $
-     def
-        { terminal           = myTerm host
-        , focusFollowsMouse  = False
-        , borderWidth        = 2           -- in pixels
-        , modMask            = mod4Mask    -- use super (Emacs)
---        , numlockMask        = 0
-        , workspaces         = myWorkspaces
-        , normalBorderColor  = myNormalBorderColor
-        , focusedBorderColor = myFocusedBorderColor
-
-        , mouseBindings      = myMouseBindings
-
---        , logHook = dynamicLogWithPP $ xmobarPP
---                    { ppOutput = hPutStrLn xmproc
---                    , ppTitle = xmobarColor "green" "" . shorten 50
---                    }
---        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer (0.5, 0.5) (1, 1)
-        , startupHook        = do
-               setWMName "LG3D"
-               return ()
-               checkKeymap (myConfig host dzen) (myKeys host dzen) -- needed to work around buggy java
-        --, layoutHook         = myLayoutHook
-        , manageHook         = manageDocks <+> myManageHook
-        -- , handleEventHook    = followOnlyIf (queryFocused whenToFollow)
-        } `additionalKeysP` myKeys host dzen
-  where
-    workHosts = ["eselnts1280"]
-    myTerm host = if (elem host workHosts) then "xterm" else "rxvt -e zsh"
-
-
+workHosts = ["eselnts1280"]
+myTerm host = if (elem host workHosts) then "xterm" else "rxvt -e zsh"
 
 leftStatusWidth "joffe"      = 1200
 leftStatusWidth "kollontaj" = 550
@@ -106,15 +68,14 @@ rightStatusWidth "joffe"      = 1232
 rightStatusWidth "kollontaj" = 748
 rightStatusWidth _           = 600
 
+myStatusBarFont = "-cmvnd-lemon-*-*-*-*-10-*-*-*-*-*-*-*"
 
--- myStatusBarFont = "-artwiz-nu.se-*-*-*-*-*-*-*-*-*-*-iso8859-1"
--- myStatusBarFont = "-artwiz-lime.se-*-*-*-*-16-*-*-*-*-*-*-*"
-myStatusBarFont = "-artwiz-aqui.se-*-*-*-*-16-*-*-*-*-*-*-*"
 myStatusBar host = "dzen2 -x '0' -y '0' -h '16' -ta 'l' "
                    ++ "-w '"  ++ show (leftStatusWidth host) ++ "' "
                    ++ "-fg '" ++ myDzenFGColor     ++ "' "
                    ++ "-bg '" ++ myNormalBGColor   ++ "' "
                    ++ "-fn '" ++ myStatusBarFont   ++ "' "
+                   ++ "-dock"
 
 myTopBar host = "conky -c ~/.xmonad/conkyrc | dzen2 -y '0' -h '16' -ta 'r' "
                 ++ "-x '"  ++ show (leftStatusWidth host)  ++ "' "
@@ -122,15 +83,12 @@ myTopBar host = "conky -c ~/.xmonad/conkyrc | dzen2 -y '0' -h '16' -ta 'r' "
                 ++ "-fg '" ++ myDzenFGColor     ++ "' "
                 ++ "-bg '" ++ myNormalBGColor   ++ "' "
                 ++ "-fn '" ++ myStatusBarFont   ++ "' "
+                ++ "-dock"
 
-myTrayer = "trayer --edge top --align right --SetDockType true --SetPartialStrut false --expand true --width 5 --transparent true --tint 0x000000 --alpha 0 --heighttype pixel --height 16"
-
--- Urgency hint options:
-myUrgencyHook = withUrgencyHook dzenUrgencyHook
-    { args = ["-x", "0", "-y", "1184", "-h", "16", "-w", "1920", "-ta", "r", "-expand", "l", "-fg", "" ++ myUrgentFGColor ++ "", "-bg", "" ++ myNormalBGColor ++ "", "-fn", "" ++ myFont ++ ""] }
-
---myMPDBar = "conky -c .conkympd | dzen2 -x '0' -y '1184' -h '16' -w '1600' -ta 'l' -fg '" ++ myDzenFGColor ++ "' -bg '" ++ myNormalBGColor ++ "' -fn '" ++ myFont ++ "'"
---myHDDBar = "conky -c .conkyhdd | dzen2 -x '1600' -y '1184' -h '16' -w '320' -ta 'r' -fg '" ++ myDzenFGColor ++ "' -bg '" ++ myNormalBGColor ++ "' -fn '" ++ myFont ++ "'"
+myTrayer = "trayer --edge top --align right --SetDockType true "
+           ++  "--SetPartialStrut true --expand true --width 5 "
+           ++ "--transparent true --tint 0x000000 --alpha 0 "
+           ++ "--heighttype pixel --height 16"
 
 -- Color, font and iconpath definitions:
 myFont = "-xos4-terminus-medium-r-normal-*-12-*-*-*-c-*-iso10646-1"
@@ -146,6 +104,15 @@ myUrgentBGColor = "#0077ff"
 myIconFGColor = "#777777"
 myIconBGColor = "#0f0f0f"
 mySeperatorColor = "#555555"
+
+-- Urgency hint options:
+myUrgencyHook = withUrgencyHook dzenUrgencyHook
+    { args = ["-x", "0", "-y", "1184", "-h", "16", "-w", "1920", "-ta", "r",
+              "-expand", "l", "-fg", "" ++ myUrgentFGColor ++ "",
+              "-bg", "" ++ myNormalBGColor ++ "", "-fn", "" ++ myFont ++ ""] }
+
+--myMPDBar = "conky -c .conkympd | dzen2 -x '0' -y '1184' -h '16' -w '1600' -ta 'l' -fg '" ++ myDzenFGColor ++ "' -bg '" ++ myNormalBGColor ++ "' -fn '" ++ myFont ++ "'"
+--myHDDBar = "conky -c .conkyhdd | dzen2 -x '1600' -y '1184' -h '16' -w '320' -ta 'r' -fg '" ++ myDzenFGColor ++ "' -bg '" ++ myNormalBGColor ++ "' -fn '" ++ myFont ++ "'"
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -361,11 +328,11 @@ myLayoutHook =
   -- avoid overlapping my dzen status bar.
   avoidStruts $
 
-  mkToggle1 NBFULL $                                  -- (14)
-  mkToggle1 REFLECTX $                                -- (14,13)
-  mkToggle1 REFLECTY $                                -- (14,13)
-  mkToggle1 NOBORDERS $                               --  "
-  mkToggle1 MIRROR $                                  --  "
+  -- mkToggle1 NBFULL $                                  -- (14)
+  -- mkToggle1 REFLECTX $                                -- (14,13)
+  -- mkToggle1 REFLECTY $                                -- (14,13)
+  -- mkToggle1 NOBORDERS $                               --  "
+  -- mkToggle1 MIRROR $                                  --  "
 
   -- borders automatically disappear for fullscreen windows.
   smartBorders $
@@ -378,35 +345,35 @@ myLayoutHook =
     myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
 -- dynamicLog pretty printer for dzen:
---myDzenPP h = defaultPP
---    { ppCurrent = activeCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
---    , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
---    , ppHidden = inactiveCorner . dropIx
---    , ppHiddenNoWindows = \wsId -> ""
---    , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
---    , ppSep = "   "
---    , ppWsSep = "  "
---    , ppTitle = dzenColor myNormalFGColor "" . wrap ">       " ""
---    , ppLayout = dzenColor myNormalFGColor "" .
---        (\x -> case x of
---        "Full" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
---        "Tabbed Simplest" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
---        "ThreeCol" -> dzenColor myIconFGColor "" $ icon "layout-threecol.xbm"
---        _ -> x
---        )
---    , ppOutput = hPutStrLn h
---    }
---    where
---      -- shorthands:
---      activeCorner = wrap (dzenColor "#FFFFFF" myFocusedBGColor (icon "corner.xbm")) ""
---      inactiveCorner = wrap (dzenColor myNormalFGColor myNormalBGColor (icon "corner.xbm")) ""
---      icon i = "^i(" ++ myIconDir ++ "/" ++ i ++ ")"
---      -- remove number in front of name:
---      dropIx id
---        | ':' `elem` id = split_ ':' id
---        | id == "NSP"   = "" -- scratchpad
---        | otherwise     = id
---        where split_ c = drop 1 . dropWhile (/= c)
+myDzenPP h = def
+   { ppCurrent = activeCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
+   , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
+   , ppHidden = inactiveCorner . dropIx
+   , ppHiddenNoWindows = \wsId -> ""
+   , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
+   , ppSep = "   "
+   , ppWsSep = "  "
+   , ppTitle = dzenColor myNormalFGColor "" . wrap ">       " ""
+   , ppLayout = dzenColor myNormalFGColor "" .
+       (\x -> case x of
+       "Full" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
+       "Tabbed Simplest" -> dzenColor myIconFGColor "" $ icon "layout-full.xbm"
+       "ThreeCol" -> dzenColor myIconFGColor "" $ icon "layout-threecol.xbm"
+       _ -> x
+       )
+   , ppOutput = hPutStrLn h
+   }
+   where
+     -- shorthands:
+     activeCorner = wrap (dzenColor "#FFFFFF" myFocusedBGColor (icon "corner.xbm")) ""
+     inactiveCorner = wrap (dzenColor myNormalFGColor myNormalBGColor (icon "corner.xbm")) ""
+     icon i = "^i(" ++ myIconDir ++ "/" ++ i ++ ")"
+     -- remove number in front of name:
+     dropIx id
+       | ':' `elem` id = split_ ':' id
+       | id == "NSP"   = "" -- scratchpad
+       | otherwise     = id
+       where split_ c = drop 1 . dropWhile (/= c)
 
 -- My password extension -------------------------------------------------------
 
@@ -464,3 +431,36 @@ pwPaster num end c = do
   -- inget händer efter detta
   toclip $ mkPass master num end site
 --}
+
+myConfig host dzen = myUrgencyHook $
+     def
+        { terminal           = myTerm host
+        , focusFollowsMouse  = False
+        , borderWidth        = 2           -- in pixels
+        , modMask            = mod4Mask    -- use super
+        , workspaces         = myWorkspaces
+        , normalBorderColor  = myNormalBorderColor
+        , focusedBorderColor = myFocusedBorderColor
+
+        , mouseBindings      = myMouseBindings
+
+        , logHook            = (dynamicLogWithPP $ myDzenPP dzen) >> updatePointer (0.5, 0.5) (1, 1)
+        , startupHook        = do
+            setWMName "LG3D"  -- needed to work around buggy java
+            -- check the key sequence descriptions for validity
+            return () -- the return here is important (see docs)
+            checkKeymap (myConfig host dzen) (myKeys host dzen)
+        , layoutHook         = myLayoutHook
+        , manageHook         = manageDocks <+> myManageHook
+        --, handleEventHook = docksEventHook
+        -- , handleEventHook    = followOnlyIf (queryFocused whenToFollow)
+        } `additionalKeysP` myKeys host dzen
+
+main :: IO()
+main = do
+--  xmproc <- spawnPipe "/home/skangas/local/bin/xmobar /home/skangas/.xmobarrc"
+  host <- fmap nodeName getSystemID
+  dzen <- spawnPipe (myStatusBar host)
+  topBar <- spawnPipe (myTopBar host)
+  trayer <- spawnPipe myTrayer
+  xmonad $ ewmh $ docks $ myConfig host dzen
