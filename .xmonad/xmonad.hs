@@ -22,6 +22,7 @@ import XMonad.Prompt.AppLauncher as AL
 import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Ssh
 import XMonad.Util.EZConfig
+import XMonad.Util.Loggers
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run
 import XMonad.Util.Scratchpad
@@ -40,6 +41,11 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
+
+-- Spacing around windows.
+-- https://hackage.haskell.org/package/xmonad-contrib-0.17.1/docs/XMonad-Layout-Spacing.html
+import XMonad.Layout.Spacing
+
 -- import XMonad.Layout.TwoPane
 -- import XMonad.Layout.WindowNavigation
 
@@ -191,7 +197,7 @@ myXPConfig = amberXPConfig
 
 ------------------------------------------------------------------------
 
-myWorkspaces    = ["1:emacs","2:www","3","4","5","6","7","8","9-virt","10-im","11-irc","12-tor"]
+myWorkspaces    = ["1:emacs","2:web","3","4","5","6","7","8","9-virt","10-im","11-irc","12-tor"]
 myNormalBorderColor  = "#151515"
 myFocusedBorderColor = "#ffff00"
 
@@ -328,14 +334,11 @@ myLayoutHook =
   -- avoid overlapping my dzen status bar.
   avoidStruts $
 
-  -- mkToggle1 NBFULL $                                  -- (14)
-  -- mkToggle1 REFLECTX $                                -- (14,13)
-  -- mkToggle1 REFLECTY $                                -- (14,13)
-  -- mkToggle1 NOBORDERS $                               --  "
-  -- mkToggle1 MIRROR $                                  --  "
-
   -- borders automatically disappear for fullscreen windows.
   smartBorders $
+
+  --configurable amount of space around windows
+  smartSpacingWithEdge 5 $
 
   -- All other workspaces start tall and can switch to a grid layout with the
   -- focused window magnified.
@@ -350,6 +353,9 @@ myDzenPP h = def
    , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
    , ppHidden = inactiveCorner . dropIx
    , ppHiddenNoWindows = \wsId -> ""
+   , ppExtras = [ logCmd "TZ='Europe/Stockholm' date +\"%a %b %d  %I:%M %p\""
+                , padL loadAvg
+                ]
    , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
    , ppSep = "   "
    , ppWsSep = "  "
