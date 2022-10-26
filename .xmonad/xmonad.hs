@@ -353,7 +353,7 @@ myDzenPP h = def
    , ppVisible = inactiveCorner . dzenColor myNormalFGColor myFocusedBGColor . dropIx
    , ppHidden = inactiveCorner . dropIx
    , ppHiddenNoWindows = \wsId -> ""
-   , ppExtras = [ logCmd "TZ='Europe/Stockholm' date +\"%a %b %d  %I:%M %p\""
+   , ppExtras = [ logCmd "TZ='Europe/Stockholm' date +\"%Y-%m-%d %a  %H:%M \""
                 , padL loadAvg
                 ]
    , ppUrgent = dzenColor myUrgentFGColor myNormalBGColor. wrap (icon "corner.xbm") "" . dropIx
